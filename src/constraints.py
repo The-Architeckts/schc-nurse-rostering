@@ -4,7 +4,7 @@ Calculates penalty = (hard_violations × 10^6) + soft_violations
 """
 
 def evaluate_solution(solution, instance_data):
-    """
+    '''
     Calculate total penalty for a solution.
     
     Args:
@@ -13,32 +13,29 @@ def evaluate_solution(solution, instance_data):
     
     Returns:
         total_penalty: int
-    """
-    penalty = 0
+    '''
+    # Check hard constraints first
+    coverage_violations = check_coverage_violations(solution, instance_data)
+    single_assignment_violations = check_single_assignment_violations(solution)
     
-    # Check each nurse's schedule against their contract
+    hard_violations = coverage_violations + single_assignment_violations
+    hard_penalty = hard_violations * (10 ** 6)
+    
+    # Check soft constraints
+    soft_penalty = 0
     for nurse_id, nurse in enumerate(instance_data['nurses']):
         contract = instance_data['contracts'][nurse.contract_id]
         nurse_schedule = solution.schedule[nurse_id]
         
-        # Check counter constraints (days worked, etc.)
-        penalty += _check_counter_constraints(contract, nurse_schedule)
-
-        penalty += _check_series_constraints(contract, nurse_schedule)
-
-        penalty += _check_pattern_constraints(contract, nurse_schedule)
-        # TODO: Add more constraint types here
-        # penalty += _check_series_constraints(contract, nurse_schedule)
-        # penalty += _check_pattern_constraints(contract, nurse_schedule)
+        soft_penalty += _check_counter_constraints(contract, nurse_schedule)
+        soft_penalty += _check_series_constraints(contract, nurse_schedule)
+        soft_penalty += _check_pattern_constraints(contract, nurse_schedule)
     
-    # TODO: Check hard constraints (coverage, single assignment per day)
-    # penalty += 10**6 * check_coverage_violations(solution, instance_data)
-    
-    return penalty
+    return hard_penalty + soft_penalty
 
 
 def _check_counter_constraints(contract, schedule):
-    """Check counter constraints (total days worked, etc.)"""
+    '''Check counter constraints (total days worked, etc.)'''
     penalty = 0
     
     for constraint in contract.counterConstraints:
@@ -58,7 +55,7 @@ def _check_counter_constraints(contract, schedule):
     return penalty
 
 def _check_series_constraints(contract, schedule):
-    """Check series constraints (consecutive working/idle days)"""
+    '''Check series constraints (consecutive working/idle days)'''
     penalty = 0
     for constraint in contract.seriesConstraints:
         variant = constraint['variant']      # 'daysWorked' or 'daysIdle'
@@ -133,3 +130,63 @@ def _check_pattern_constraints(contract, schedule):
                 penalty += 1  # Found forbidden pattern
     
     return penalty
+
+def check_coverage_violations(solution, instance_data):
+    '''Check if all coverage requirements are satisfied (H1: Hard Constraint).'''
+    from models import ShiftType
+    
+    violations = 0
+    coverage = instance_data['coverage']
+    
+    # For each coverage requirement
+    for req in coverage:
+        day_index = req['dayIndex']
+        shift_type_ids = req['shiftTypeIds']  # This is an array!
+        min_required = req['min']
+        max_required = req['max']
+        
+        # In INRC-I, shiftTypeIds is always a single-element array for sprint instances
+        shift_type_id = shift_type_ids[0]
+        
+        # Convert shift type string to binary value
+        shift_value = ShiftType.from_string(shift_type_id)
+        
+        # Count how many nurses are assigned this shift on this day
+        assigned_count = 0
+        for nurse_id in range(len(solution.schedule)):
+            if solution.schedule[nurse_id][day_index] == shift_value:
+                assigned_count += 1
+        
+        # Calculate violations
+        # Under-staffing: assigned < min
+        if assigned_count < min_required:
+            violations += (min_required - assigned_count)
+        
+        # Over-staffing: assigned > max
+        elif assigned_count > max_required:
+            violations += (assigned_count - max_required)
+        
+        # Note: In INRC-I sprint instances, min == max for all requirements
+        # So we only need to match exactly
+    
+    return violations
+
+def check_single_assignment_violations(solution):
+    '''Check if any nurse is assigned multiple shifts on the same day (H2: Hard Constraint).'''
+
+    violations = 0
+    
+    # Check each nurse's schedule
+    for nurse_id in range(len(solution.schedule)):
+        schedule = solution.schedule[nurse_id]
+
+        # Encoding enforces each day have exactly one value, we validate by ensuring no day has an invalid value
+        for day_index, shift in enumerate(schedule):
+            # Valid shift values: 1 (OFF), 2 (N), 4 (D), 8 (L), 16 (E)
+            valid_values = {1, 2, 4, 8, 16}
+            
+            if shift not in valid_values:
+                violations += 1
+                # This would indicate a serious bug in the solution representation
+    
+    return violations
