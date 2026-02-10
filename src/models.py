@@ -26,23 +26,27 @@ class ShiftType:
 
 
 class Nurse:
-    def __init__(self, id, contract_id, skills, shift_off_requests, time_off_requests):
+    def __init__(self, id, contract_id, skills, shift_off_requests, time_off_requests, weekend_composition_id):
         self.id = id
         self.contract_id = contract_id
         self.skills = skills
         self.shift_off_requests = shift_off_requests
         self.time_off_requests = time_off_requests
+        self.weekend_composition_id = weekend_composition_id
     
     def __repr__(self):
         return f"Nurse(id={self.id}, contract={self.contract_id})"
 
 
 class Contract:
-    def __init__(self, id, counterConstraints, seriesConstraints, patternConstraints):
+    def __init__(self, id, counterConstraints, seriesConstraints, patternConstraints, 
+                 completeWeekends, identicalWeekends):
         self.id = id
         self.counterConstraints = counterConstraints
         self.seriesConstraints = seriesConstraints
         self.patternConstraints = patternConstraints
+        self.completeWeekends = completeWeekends
+        self.identicalWeekends = identicalWeekends
     
     def __repr__(self):
         return f"Contract(id={self.id})"

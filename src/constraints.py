@@ -14,7 +14,7 @@ def evaluate_solution(solution, instance_data):
     Returns:
         total_penalty: int
     '''
-    # Check hard constraints first
+# Check hard constraints first
     coverage_violations = check_coverage_violations(solution, instance_data)
     single_assignment_violations = check_single_assignment_violations(solution)
     
@@ -27,9 +27,16 @@ def evaluate_solution(solution, instance_data):
         contract = instance_data['contracts'][nurse.contract_id]
         nurse_schedule = solution.schedule[nurse_id]
         
+        # Contract-based constraints
         soft_penalty += _check_counter_constraints(contract, nurse_schedule)
         soft_penalty += _check_series_constraints(contract, nurse_schedule)
         soft_penalty += _check_pattern_constraints(contract, nurse_schedule)
+        soft_penalty += _check_complete_weekends(nurse, nurse_schedule, instance_data)
+        soft_penalty += _check_identical_weekends(nurse, nurse_schedule, instance_data)
+        
+        # Nurse-specific request constraints
+        soft_penalty += _check_shift_off_requests(nurse, nurse_schedule)
+        soft_penalty += _check_time_off_requests(nurse, nurse_schedule)
     
     return hard_penalty + soft_penalty
 
@@ -188,5 +195,154 @@ def check_single_assignment_violations(solution):
             if shift not in valid_values:
                 violations += 1
                 # This would indicate a serious bug in the solution representation
-    
+
     return violations
+
+def _check_shift_off_requests(nurse, schedule):
+    '''Check if nurse is assigned a shift they requested off.'''
+    from models import ShiftType
+    
+    penalty = 0
+    
+    for request in nurse.shift_off_requests:
+        day_index = request['dayIndex']
+        requested_off_shift = request['shiftTypeId']
+        
+        # Convert shift string to binary value
+        shift_value = ShiftType.from_string(requested_off_shift)
+        
+        # Check if nurse is assigned this shift on this day
+        if schedule[day_index] == shift_value:
+            penalty += 1  # Violated the request
+    
+    return penalty
+
+
+def _check_time_off_requests(nurse, schedule):
+    '''Check if nurse is working on a day they requested completely off.'''
+    from models import ShiftType
+    
+    penalty = 0
+    
+    for request in nurse.time_off_requests:
+        day_index = request['dayIndex']
+        
+        # Check if nurse is working (not OFF) on this day
+        if schedule[day_index] != ShiftType.OFF:
+            penalty += 1  # Violated the request
+    
+    return penalty
+
+
+def _check_complete_weekends(nurse, schedule, instance_data):
+    '''Check if nurse works incomplete weekends.'''
+    from models import ShiftType
+    
+    contract = instance_data['contracts'][nurse.contract_id]
+    
+    # Check if this contract has complete weekend constraint
+    if not contract.completeWeekends or contract.completeWeekends.get('Soft') is None:
+        return 0  # Constraint not active
+    
+    # Get weekend composition for this nurse
+    weekend_comp_id = nurse.weekend_composition_id
+    weekend_comp = instance_data['weekend_compositions'][weekend_comp_id]
+    
+    # Identify which days are weekends
+    weekends = _identify_weekends(instance_data['period'], 
+                                   instance_data['start_day'], 
+                                   weekend_comp)
+    
+    penalty = 0
+    
+    for weekend_days in weekends:
+        # Check if nurse works any day of this weekend
+        works_any_day = any(schedule[day] != ShiftType.OFF for day in weekend_days)
+        
+        # Check if nurse works all days of this weekend
+        works_all_days = all(schedule[day] != ShiftType.OFF for day in weekend_days)
+        
+        # Violation: works some but not all days
+        if works_any_day and not works_all_days:
+            penalty += 1
+    
+    return penalty
+
+
+def _check_identical_weekends(nurse, schedule, instance_data):
+    '''Check if nurse works identical shifts on all weekend days.'''
+    from models import ShiftType
+    
+    contract = instance_data['contracts'][nurse.contract_id]
+    
+    # Check if this contract has identical weekend constraint
+    if not contract.identicalWeekends or contract.identicalWeekends.get('Soft') is None:
+        return 0  # Constraint not active
+    
+    # Get weekend composition for this nurse
+    weekend_comp_id = nurse.weekend_composition_id
+    weekend_comp = instance_data['weekend_compositions'][weekend_comp_id]
+    
+    # Identify which days are weekends
+    weekends = _identify_weekends(instance_data['period'], 
+                                   instance_data['start_day'], 
+                                   weekend_comp)
+    
+    penalty = 0
+    
+    for weekend_days in weekends:
+        # Get shifts worked on weekend days (excluding OFF)
+        weekend_shifts = [schedule[day] for day in weekend_days 
+                         if schedule[day] != ShiftType.OFF]
+        
+        # If nurse works weekend, check all shifts are identical
+        if weekend_shifts:
+            if len(set(weekend_shifts)) > 1:  # More than one unique shift type
+                penalty += 1
+    
+    return penalty
+
+
+def _identify_weekends(horizon, start_day, weekend_comp):
+    '''Identify which days form weekends based on start day and weekend composition.'''
+    # Map day names to offsets (0 = Monday)
+    day_map = {
+        'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3,
+        'friday': 4, 'saturday': 5, 'sunday': 6
+    }
+    
+    # Get the offset of the start day in the week
+    start_offset = day_map[start_day.lower()]
+    
+    # Get weekend start/end offsets
+    weekend_start = day_map[weekend_comp['startDay'].lower()]
+    weekend_end = day_map[weekend_comp['endDay'].lower()]
+    
+    # Calculate which days in the period are weekend days
+    weekends = []
+    current_weekend = []
+    
+    for day_index in range(horizon):
+        # Calculate day of week for this day in the period
+        day_of_week = (start_offset + day_index) % 7
+        
+        # Check if this day is part of a weekend
+        if weekend_start <= weekend_end:
+            is_weekend_day = weekend_start <= day_of_week <= weekend_end
+        else:
+            # Handle wrap-around (e.g., Sunday-Monday weekend)
+            is_weekend_day = day_of_week >= weekend_start or day_of_week <= weekend_end
+        
+        if is_weekend_day:
+            current_weekend.append(day_index)
+        else:
+            # End of weekend, save it
+            if current_weekend:
+                weekends.append(current_weekend)
+                current_weekend = []
+    
+    # Don't forget last weekend if period ends on weekend
+    if current_weekend:
+        weekends.append(current_weekend)
+    
+    return weekends
