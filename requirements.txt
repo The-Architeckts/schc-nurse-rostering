@@ -1,0 +1,1 @@
+No external dependencies currently required# Using Python 3.12+ standard library only# Future dependencies for analysis/visualization:# numpy>=1.24.0# matplotlib>=3.7.0# pandas>=2.0.0

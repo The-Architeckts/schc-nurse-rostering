@@ -1,0 +1,4 @@
+# Python__pycache__/*.pyc*.pyo*.pyd.Python*.so# 
+IDEs.vscode/.idea/*.swp*.swo# 
+OS.DS_StoreThumbs.dbdesktop.ini# Results/outputsresults/
+outputs/*.log# Potentially sensitiveconfig.ini.env

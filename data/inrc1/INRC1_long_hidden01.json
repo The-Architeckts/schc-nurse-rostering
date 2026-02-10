@@ -1,0 +1,3122 @@
+{
+  "name": "long_hidden01",
+  "period": {
+    "horizon": 28,
+    "startDay": "tuesday",
+    "startDate": "2010-06-01"
+  },
+  "instanceDefinitions": {
+    "holidays": null,
+    "skillTypeIds": [
+      "Nurse",
+      "HeadNurse"
+    ],
+    "shiftTypes": [
+      {
+        "id": "E",
+        "startTime": "06:30:00",
+        "endTime": "14:30:00",
+        "skillGroup": {
+          "constraintType": "Hard",
+          "skillTypeIds": [
+            "Nurse"
+          ]
+        }
+      },
+      {
+        "id": "L",
+        "startTime": "14:30:00",
+        "endTime": "22:30:00",
+        "canNotPrecede": [
+          "D",
+          "E",
+          "DH"
+        ],
+        "skillGroup": {
+          "constraintType": "Hard",
+          "skillTypeIds": [
+            "Nurse"
+          ]
+        }
+      },
+      {
+        "id": "D",
+        "startTime": "08:30:00",
+        "endTime": "16:30:00",
+        "canNotPrecede": [
+          "N"
+        ],
+        "skillGroup": {
+          "constraintType": "Hard",
+          "skillTypeIds": [
+            "Nurse"
+          ]
+        }
+      },
+      {
+        "id": "N",
+        "startTime": "22:30:00",
+        "endTime": "06:30:00",
+        "canNotPrecede": [
+          "D",
+          "E",
+          "DH"
+        ],
+        "skillGroup": {
+          "constraintType": "Hard",
+          "skillTypeIds": [
+            "Nurse"
+          ]
+        }
+      },
+      {
+        "id": "DH",
+        "startTime": "08:30:00",
+        "endTime": "16:30:00",
+        "skillGroup": {
+          "constraintType": "Hard",
+          "skillTypeIds": [
+            "HeadNurse"
+          ]
+        }
+      }
+    ],
+    "constraintSets": [
+      {
+        "id": "0",
+        "counterConstraints": [
+          {
+            "id": "num_assignments",
+            "constraintType": {
+              "Soft": 3
+            },
+            "startDayIndex": 0,
+            "endDayIndex": 28,
+            "min": 10,
+            "max": 20,
+            "variant": "daysWorked",
+            "dayTypes": [
+              "any"
+            ]
+          }
+        ],
+        "seriesConstraints": [
+          {
+            "constraintType": {
+              "Soft": 4
+            },
+            "min": 3,
+            "max": 5,
+            "variant": "daysWorked"
+          },
+          {
+            "constraintType": {
+              "Soft": 7
+            },
+            "min": null,
+            "max": 4,
+            "variant": "daysIdle"
+          },
+          {
+            "constraintType": {
+              "Soft": 3
+            },
+            "min": 3,
+            "max": null,
+            "variant": "daysIdle"
+          },
+          {
+            "constraintType": {
+              "Soft": 5
+            },
+            "min": 2,
+            "max": 3,
+            "variant": "weekendsWorked"
+          }
+        ],
+        "patternConstraints": [
+          {
+            "id": "no_night_shift_before_free_weekend",
+            "constraintType": {
+              "Soft": 10
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "friday"
+                ]
+              },
+              {
+                "shiftTypeIds": "none",
+                "dayTypes": [
+                  "saturday"
+                ]
+              },
+              {
+                "shiftTypeIds": "none",
+                "dayTypes": [
+                  "sunday"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "0",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "3",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "E"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "4",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "5",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "E"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "DH"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "8",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "DH"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          }
+        ],
+        "completeWeekends": {
+          "Soft": 10
+        },
+        "identicalWeekends": {
+          "Soft": 10
+        }
+      },
+      {
+        "id": "1",
+        "counterConstraints": [
+          {
+            "id": "num_assignments",
+            "constraintType": {
+              "Soft": 3
+            },
+            "startDayIndex": 0,
+            "endDayIndex": 28,
+            "min": 6,
+            "max": 15,
+            "variant": "daysWorked",
+            "dayTypes": [
+              "any"
+            ]
+          }
+        ],
+        "seriesConstraints": [
+          {
+            "constraintType": {
+              "Soft": 4
+            },
+            "min": 3,
+            "max": 5,
+            "variant": "daysWorked"
+          },
+          {
+            "constraintType": {
+              "Soft": 7
+            },
+            "min": null,
+            "max": 5,
+            "variant": "daysIdle"
+          },
+          {
+            "constraintType": {
+              "Soft": 3
+            },
+            "min": 2,
+            "max": null,
+            "variant": "daysIdle"
+          },
+          {
+            "constraintType": {
+              "Soft": 5
+            },
+            "min": 1,
+            "max": 3,
+            "variant": "weekendsWorked"
+          }
+        ],
+        "patternConstraints": [
+          {
+            "id": "no_night_shift_before_free_weekend",
+            "constraintType": {
+              "Soft": 10
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "friday"
+                ]
+              },
+              {
+                "shiftTypeIds": "none",
+                "dayTypes": [
+                  "saturday"
+                ]
+              },
+              {
+                "shiftTypeIds": "none",
+                "dayTypes": [
+                  "sunday"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "0",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "3",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "E"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "4",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "5",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "E"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "DH"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "8",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "DH"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          }
+        ],
+        "completeWeekends": {
+          "Soft": 10
+        },
+        "identicalWeekends": {
+          "Soft": 10
+        }
+      },
+      {
+        "id": "2",
+        "counterConstraints": [
+          {
+            "id": "num_assignments",
+            "constraintType": {
+              "Soft": 3
+            },
+            "startDayIndex": 0,
+            "endDayIndex": 28,
+            "min": 4,
+            "max": 10,
+            "variant": "daysWorked",
+            "dayTypes": [
+              "any"
+            ]
+          }
+        ],
+        "seriesConstraints": [
+          {
+            "constraintType": {
+              "Soft": 4
+            },
+            "min": 2,
+            "max": 4,
+            "variant": "daysWorked"
+          },
+          {
+            "constraintType": {
+              "Soft": 7
+            },
+            "min": null,
+            "max": 5,
+            "variant": "daysIdle"
+          },
+          {
+            "constraintType": {
+              "Soft": 3
+            },
+            "min": 3,
+            "max": null,
+            "variant": "daysIdle"
+          },
+          {
+            "constraintType": {
+              "Soft": 5
+            },
+            "min": null,
+            "max": 1,
+            "variant": "weekendsWorked"
+          }
+        ],
+        "patternConstraints": [
+          {
+            "id": "no_night_shift_before_free_weekend",
+            "constraintType": {
+              "Soft": 10
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "friday"
+                ]
+              },
+              {
+                "shiftTypeIds": "none",
+                "dayTypes": [
+                  "saturday"
+                ]
+              },
+              {
+                "shiftTypeIds": "none",
+                "dayTypes": [
+                  "sunday"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "0",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "3",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "E"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "4",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "5",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "D"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "E"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "L"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "DH"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "8",
+            "constraintType": {
+              "Soft": 1
+            },
+            "entries": [
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "N"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              },
+              {
+                "shiftTypeIds": {
+                  "shiftTypes": [
+                    "DH"
+                  ]
+                },
+                "dayTypes": [
+                  "any"
+                ]
+              }
+            ]
+          }
+        ],
+        "completeWeekends": {
+          "Soft": 10
+        },
+        "identicalWeekends": {
+          "Soft": 10
+        }
+      }
+    ],
+    "weekendCompositions": [
+      {
+        "id": "0",
+        "startDay": "saturday",
+        "endDay": "sunday"
+      },
+      {
+        "id": "1",
+        "startDay": "saturday",
+        "endDay": "sunday"
+      },
+      {
+        "id": "2",
+        "startDay": "friday",
+        "endDay": "sunday"
+      }
+    ],
+    "globalWeights": {
+      "restTimeBetweenShifts": 0
+    }
+  },
+  "employees": [
+    {
+      "id": "0",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": null
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "1",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "2",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "3",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "4",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "5",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "6",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "7",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "8",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "9",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "10",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "11",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "12",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "13",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "14",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "0",
+      "weekendCompositionId": "0"
+    },
+    {
+      "id": "15",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "16",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "17",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "18",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "19",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "20",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "21",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "22",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "23",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "24",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "25",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "26",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "27",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "28",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "29",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "1",
+      "weekendCompositionId": "1"
+    },
+    {
+      "id": "30",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "31",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "32",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "33",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "34",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "35",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "36",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "37",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "38",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "39",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "40",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "41",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "42",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "43",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "44",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "45",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "46",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "47",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "48",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": 10
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    },
+    {
+      "id": "49",
+      "skillTypes": [
+        {
+          "skillTypeId": "Nurse",
+          "weight": null
+        },
+        {
+          "skillTypeId": "HeadNurse",
+          "weight": null
+        }
+      ],
+      "constraintSetId": "2",
+      "weekendCompositionId": "2"
+    }
+  ],
+  "coverageRequirements": [
+    {
+      "constraintType": "Hard",
+      "dayIndex": 0,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 0,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 0,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 0,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 0,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 1,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 1,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 1,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 1,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 1,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 2,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 2,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 2,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 2,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 2,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 3,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 3,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 3,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 3,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 3,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 4,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 4,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 4,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 4,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 4,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 5,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 5,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 5,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 5,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 5,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 6,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 6,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 6,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 6,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 6,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 7,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 7,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 7,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 7,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 7,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 8,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 8,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 8,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 8,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 8,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 9,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 9,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 9,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 9,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 9,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 10,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 10,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 10,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 10,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 10,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 11,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 11,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 11,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 11,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 11,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 12,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 12,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 12,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 12,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 12,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 13,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 13,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 13,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 13,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 13,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 14,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 14,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 14,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 14,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 14,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 15,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 15,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 15,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 15,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 15,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 16,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 16,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 16,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 16,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 16,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 17,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 17,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 17,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 17,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 17,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 18,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 18,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 18,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 18,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 18,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 19,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 19,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 19,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 19,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 19,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 20,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 20,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 20,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 20,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 20,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 21,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 21,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 21,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 21,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 21,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 22,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 22,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 22,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 22,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 22,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 23,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 23,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 23,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 23,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 23,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 24,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 24,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 24,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 24,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 24,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 25,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 25,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 25,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 25,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 25,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 26,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 26,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 26,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 3,
+      "max": 3
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 26,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 4,
+      "max": 4
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 26,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 1,
+      "max": 1
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 27,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "E"
+      ],
+      "min": 10,
+      "max": 10
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 27,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "L"
+      ],
+      "min": 7,
+      "max": 7
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 27,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "D"
+      ],
+      "min": 5,
+      "max": 5
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 27,
+      "skillTypeId": "Nurse",
+      "shiftTypeIds": [
+        "N"
+      ],
+      "min": 6,
+      "max": 6
+    },
+    {
+      "constraintType": "Hard",
+      "dayIndex": 27,
+      "skillTypeId": "HeadNurse",
+      "shiftTypeIds": [
+        "DH"
+      ],
+      "min": 2,
+      "max": 2
+    }
+  ]
+}
