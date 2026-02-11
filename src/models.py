@@ -20,7 +20,7 @@ class ShiftType:
     
     @staticmethod
     def to_string(shift_int):
-        '''Convert binary back to 'E', 'L', 'D', 'N', '-''''
+        '''Convert binary back to 'E', 'L', 'D', 'N', '-' '''
         mapping = {16: 'E', 8: 'L', 4: 'D', 2: 'N', 1: '-'}
         return mapping.get(shift_int, '?')
 

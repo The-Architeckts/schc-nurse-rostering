@@ -2,12 +2,27 @@
 Comprehensive testing for all neighborhood operators.
 Tests each operator individually and reports statistics.
 '''
+import sys
+from pathlib import Path
+
+# Add src directory to Python path
+src_path = Path(__file__).parent.parent
+sys.path.append(str(src_path))
 
 from data_loader import load_instance
 from constructors import greedy_constructor
-from operators import *
+from operators import (
+    get_all_operators,
+    operator_swap_shifts_same_day,
+    operator_swap_all_shifts_two_days,
+    operator_cyclic_swap,
+    operator_move_pattern,
+    operator_swap_pattern,
+    operator_three_nurse_rotation
+)
 from constraints import evaluate_solution
 from models import ShiftType
+
 
 # Load instance
 instance = load_instance('data/inrc1/INRC1_sprint01.json')
@@ -25,7 +40,6 @@ print()
 operators = get_all_operators()
 operator_names = [
     "Swap Shifts (Same Day)",
-    "Swap Shifts (Same Nurse)",
     "Swap All Shifts (Two Days)",
     "Cyclic Swap",
     "Move Pattern",
@@ -87,11 +101,11 @@ for i, (operator_func, operator_name) in enumerate(zip(operators, operator_names
         print(f"  ❌ FAILED: No valid moves generated")
 
 print("\n" + "="*80)
-print("DETAILED EXAMPLE: Single Shift Change")
+print("DETAILED EXAMPLE: Swap Shifts (Same Day)")
 print("="*80)
 
 # Show detailed example of one operator
-neighbor = operator_single_shift_change(baseline, instance)
+neighbor = operator_swap_shifts_same_day(baseline, instance)
 
 if neighbor:
     print("\nBaseline schedule (first 3 nurses, first 10 days):")

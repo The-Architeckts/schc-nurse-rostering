@@ -2,11 +2,16 @@
 Temporary test file - used to verify that components work.
 '''
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path so we can import from src/
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from data_loader import load_instance
-from solution import Solution
-from models import ShiftType
-from constraints import evaluate_solution
 from constructors import greedy_constructor
+from models import ShiftType
+from constraints import evaluate_solution, _identify_weekends
 
 # Load instance
 instance = load_instance('data/inrc1/INRC1_sprint01.json')

@@ -19,7 +19,6 @@ def get_all_operators():
     '''
     return [
         operator_swap_shifts_same_day,           # Operator 2
-        operator_swap_shifts_same_nurse,         # Operator 3
         operator_swap_all_shifts_two_days,       # Operator 5
         operator_cyclic_swap,                     # Operator 6
         operator_move_pattern,                    # Operator 7
@@ -75,55 +74,6 @@ def operator_swap_shifts_same_day(solution, instance_data):
             return new_solution
     
     return None
-
-
-# ============================================================================
-# OPERATOR 3: SWAP SHIFTS (SAME NURSE, DIFFERENT DAYS)
-# ============================================================================
-
-def operator_swap_shifts_same_nurse(solution, instance_data):
-    '''
-    Swap shift assignments for one nurse across two different days.
-    
-    This can help improve series constraints (consecutive work patterns)
-    without affecting other nurses.
-    
-    Example:
-        Nurse 2: Day 3 (E) ↔ Day 7 (OFF)
-        Result: Nurse 2 now OFF on day 3, works E on day 7
-    
-    Args:
-        solution: Current Solution object
-        instance_data: Dict from load_instance()
-    
-    Returns:
-        new_solution: Modified Solution object (or None if no valid move found)
-    '''
-    n_nurses = len(instance_data['nurses'])
-    n_days = instance_data['period']
-    
-    for _ in range(50):
-        nurse_id = random.randint(0, n_nurses - 1)
-        day1 = random.randint(0, n_days - 1)
-        day2 = random.randint(0, n_days - 1)
-        
-        if day1 == day2:
-            continue
-        
-        # Get current shifts
-        shift1 = solution.schedule[nurse_id][day1]
-        shift2 = solution.schedule[nurse_id][day2]
-        
-        # Create new solution with swapped shifts
-        new_solution = solution.copy()
-        new_solution.assign_shift(nurse_id, day1, shift2)
-        new_solution.assign_shift(nurse_id, day2, shift1)
-        
-        if is_feasible(new_solution, instance_data):
-            return new_solution
-    
-    return None
-
 
 # ============================================================================
 # OPERATOR 5: SWAP ALL SHIFTS (TWO DAYS, TWO NURSES)
