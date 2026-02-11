@@ -1,6 +1,6 @@
-"""
+'''
 Test hard constraint checking with valid and invalid solutions.
-"""
+'''
 
 from data_loader import load_instance
 from solution import Solution

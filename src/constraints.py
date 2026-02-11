@@ -1,7 +1,7 @@
-"""
+'''
 Constraint evaluation for Nurse Rostering Problem.
 Calculates penalty = (hard_violations × 10^6) + soft_violations
-"""
+'''
 
 def evaluate_solution(solution, instance_data):
     '''

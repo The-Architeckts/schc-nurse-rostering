@@ -1,15 +1,15 @@
-"""
+'''
 Load INRC-I JSON instances into Python objects.
-"""
+'''
 
 import json
 from models import Nurse, Contract
 
 def load_instance(filepath):
-    """
+    '''
     Load INRC-I instance from JSON file.
     Returns: dict with 'nurses', 'contracts', 'coverage', etc.
-    """
+    '''
     with open(filepath, 'r') as f:
         data = json.load(f)
     
@@ -50,7 +50,7 @@ def load_instance(filepath):
 
 
 def create_nurse_from_json(employee_data):
-    """Helper: Create Nurse object from JSON employee data"""
+    '''Helper: Create Nurse object from JSON employee data'''
     return Nurse(
         id=employee_data['id'],
         contract_id=employee_data['constraintSetId'],

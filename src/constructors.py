@@ -1,19 +1,19 @@
-"""
+'''
 Constructors for generating initial solutions.
-"""
+'''
 
 from solution import Solution
 from models import ShiftType
 
 def greedy_constructor(instance_data):
-    """
+    '''
     Create a baseline feasible solution using round-robin greedy assignment.
     
     Strategy:
     - Iterate through all coverage requirements
     - For each requirement, assign nurses round-robin
     - Goal: Satisfy hard constraints (coverage)
-    """
+    '''
     n_nurses = len(instance_data['nurses'])
     n_days = instance_data['period']
     

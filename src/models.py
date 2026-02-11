@@ -1,10 +1,10 @@
-"""
+'''
 Data models for Nurse Rostering Problem.
 Represents nurses, contracts, shift types, etc.
-"""
+'''
 
 class ShiftType:
-    """Binary encoding for shifts"""
+    '''Binary encoding for shifts'''
     E = 16     # 0b10000 - Early
     L = 8      # 0b01000 - Late
     D = 4      # 0b00100 - Day
@@ -13,14 +13,14 @@ class ShiftType:
     
     @staticmethod
     def from_string(shift_str):
-        """Convert 'E', 'L', 'D', 'N' to binary"""
+        '''Convert 'E', 'L', 'D', 'N' to binary'''
         mapping = {'E': ShiftType.E, 'L': ShiftType.L, 
                    'D': ShiftType.D, 'N': ShiftType.N}
         return mapping.get(shift_str, ShiftType.OFF)
     
     @staticmethod
     def to_string(shift_int):
-        """Convert binary back to 'E', 'L', 'D', 'N', '-'"""
+        '''Convert binary back to 'E', 'L', 'D', 'N', '-''''
         mapping = {16: 'E', 8: 'L', 4: 'D', 2: 'N', 1: '-'}
         return mapping.get(shift_int, '?')
 

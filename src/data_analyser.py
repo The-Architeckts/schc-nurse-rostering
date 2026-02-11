@@ -1,6 +1,6 @@
-"""
+'''
 Temporary test file - used to verify that components work.
-"""
+'''
 
 from data_loader import load_instance
 from solution import Solution
@@ -51,7 +51,7 @@ for contract_id in sorted(unique_contracts):
     for c in contract.counterConstraints:
         print(f"  - {c['variant']}: min={c.get('min', 'N/A')}, max={c.get('max', 'N/A')}, weight={c.get('weight', 1)}")
 
-print("\n" + "-"*80)
+'''print("\n" + "-"*80)
 print("INDIVIDUAL NURSE PENALTIES:")
 print("-"*80)
 
@@ -65,7 +65,7 @@ for nurse_id in range(len(instance['nurses'])):
     
     days_worked = sum(1 for day in nurse_schedule if day != ShiftType.OFF)
     
-    print(f"Nurse {nurse_id} (Contract {nurse.contract_id}): {days_worked} days, penalty = {nurse_penalty}")
+    print(f"Nurse {nurse_id} (Contract {nurse.contract_id}): {days_worked} days, penalty = {nurse_penalty}")'''
 
 # ============================================================================
 # DETAILED CONSTRAINT DEBUGGING
