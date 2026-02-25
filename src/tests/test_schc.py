@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from data_loader import load_instance
 from constructors import greedy_constructor
 from algorithms.hill_climbing import HillClimbing
-from algorithms.schc import SCHC_all
+from algorithms.schc import SCHC
 from constraints import evaluate_solution
 
 try:
@@ -91,9 +91,10 @@ for Lc in LC_VALUES:
             )
         else:
             # SCHC-all
-            algorithm = SCHC_all(
+            algorithm = SCHC(
                 instance_data=instance,
                 Lc=Lc,
+                variant='all',  # Keep existing behavior
                 max_idle_iterations=MAX_IDLE_SCHC,
                 random_seed=run
             )
@@ -185,18 +186,18 @@ for Lc in [50, 100, 200]:
     print(f"  Standard deviation: {hc_stddev:.1f} vs {schc_stddev:.1f} (Δ = {stddev_change:+.1f})")
     
     if avg_diff > 0:
-        print(f"  ✅ SCHC better by {avg_diff:.1f} penalties ({abs(avg_diff)/hc_avg*100:.1f}%)")
+        print(f"  O SCHC better by {avg_diff:.1f} penalties ({abs(avg_diff)/hc_avg*100:.1f}%)")
     elif avg_diff < 0:
-        print(f"  ❌ HC better by {abs(avg_diff):.1f} penalties ({abs(avg_diff)/hc_avg*100:.1f}%)")
+        print(f"  X HC better by {abs(avg_diff):.1f} penalties ({abs(avg_diff)/hc_avg*100:.1f}%)")
     else:
-        print(f"  ➖ Same average performance")
+        print(f"  - Same average performance")
     
     # Check if SCHC improves worst-case
     hc_worst = max(r['final_penalty'] for r in hc_results)
     schc_worst = max(r['final_penalty'] for r in schc_results)
     
     if schc_worst < hc_worst:
-        print(f"  ✅ SCHC improves worst-case: {hc_worst} → {schc_worst} ({hc_worst-schc_worst} better)")
+        print(f"  O SCHC improves worst-case: {hc_worst} → {schc_worst} ({hc_worst-schc_worst} better)")
     
     print()
 
@@ -242,7 +243,7 @@ if HAS_MATPLOTLIB:
     
     plt.tight_layout()
     plt.savefig('schc_comparison.png', dpi=150, bbox_inches='tight')
-    print("✅ Convergence plot saved as 'schc_comparison.png'")
+    print("Convergence plot saved as 'schc_comparison.png'")
     print()
 
 
@@ -275,11 +276,11 @@ for Lc in [50, 100, 200]:
     print(f"HC (Lc=0) vs SCHC (Lc={Lc}): {wins} wins, {losses} losses, {ties} ties")
     
     if wins > losses:
-        print(f"  ✅ SCHC wins {wins}/{NUM_RUNS} runs ({wins/NUM_RUNS*100:.0f}%)")
+        print(f"  O SCHC wins {wins}/{NUM_RUNS} runs ({wins/NUM_RUNS*100:.0f}%)")
     elif losses > wins:
-        print(f"  ❌ HC wins {losses}/{NUM_RUNS} runs ({losses/NUM_RUNS*100:.0f}%)")
+        print(f"  X HC wins {losses}/{NUM_RUNS} runs ({losses/NUM_RUNS*100:.0f}%)")
     else:
-        print(f"  ➖ Tied performance")
+        print(f"  - Tied performance")
     
     print()
 

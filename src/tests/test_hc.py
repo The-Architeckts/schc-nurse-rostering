@@ -32,9 +32,9 @@ from models import ShiftType
 # ============================================================================
 
 def print_schedule(solution, instance_data, title="SCHEDULE"):
-    """
+    '''
     Print a formatted schedule showing all nurses and all days.
-    """
+    '''
     print("\n" + "="*80)
     print(title)
     print("="*80)
@@ -110,9 +110,9 @@ best_solution, stats = hc.optimize(baseline, verbose=True)
 # Print operator statistics
 hc.print_operator_statistics()
 
-# PRINT OPTIMIZED SCHEDULE
+# PRINT OPTIMISED SCHEDULE
 print_schedule(best_solution, instance, 
-               f"OPTIMIZED SCHEDULE - STANDARD HC (Penalty: {stats['final_penalty']})")
+               f"OPTIMISED SCHEDULE - STANDARD HC (Penalty: {stats['final_penalty']})")
 
 # Detailed constraint breakdown
 print("\n" + "="*80)
@@ -212,9 +212,9 @@ best_solution_sd, stats_sd = sdhc.optimize(baseline, verbose=True)
 
 sdhc.print_operator_statistics()
 
-# PRINT OPTIMIZED SCHEDULE
+# PRINT OPTIMISED SCHEDULE
 print_schedule(best_solution_sd, instance, 
-               f"OPTIMIZED SCHEDULE - STEEPEST DESCENT HC (Penalty: {stats_sd['final_penalty']})")
+               f"OPTIMISED SCHEDULE - STEEPEST DESCENT HC (Penalty: {stats_sd['final_penalty']})")
 
 # ============================================================================
 # TEST 3: Multiple Runs Comparison
@@ -281,10 +281,10 @@ try:
     
     plt.tight_layout()
     plt.savefig('hc_convergence.png', dpi=150)
-    print("✅ Convergence plot saved as 'hc_convergence.png'")
+    print("Convergence plot saved as 'hc_convergence.png'")
     print()
 except Exception as e:
-    print(f"⚠️ Could not generate plot: {e}")
+    print(f"Could not generate plot: {e}")
     print("(Install matplotlib if you want convergence plots)")
     print()
 

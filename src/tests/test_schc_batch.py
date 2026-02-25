@@ -169,7 +169,7 @@ csv_writer.writerow([
 for instance_path in INSTANCES:
     # Check if instance exists
     if not Path(instance_path).exists():
-        print(f"⚠️  Skipping {instance_path} (file not found)")
+        print(f"CAUTION Skipping {instance_path} (file not found)")
         continue
     
     instance_name = Path(instance_path).stem
@@ -183,7 +183,7 @@ for instance_path in INSTANCES:
         instance = load_instance(instance_path)
         print(f"Loaded: {instance['name']} ({len(instance['nurses'])} nurses, {instance['period']} days)")
     except Exception as e:
-        print(f"❌ Error loading instance: {e}")
+        print(f"ERROR loading instance: {e}")
         continue
     
     # Generate baseline
@@ -391,9 +391,9 @@ for lc_value in sorted(by_lc.keys()):
     print(f"  Standard deviation: {hc_stddev:.1f} vs {schc_stddev:.1f} (Δ = {stddev_change:+.1f})")
     
     if avg_diff > 0:
-        print(f"  ✅ SCHC better by {avg_diff:.1f} penalties ({abs(avg_diff)/hc_avg*100:.1f}%)")
+        print(f"  SCHC better by {avg_diff:.1f} penalties ({abs(avg_diff)/hc_avg*100:.1f}%)")
     else:
-        print(f"  ❌ HC better by {abs(avg_diff):.1f} penalties")
+        print(f"  HC better by {abs(avg_diff):.1f} penalties")
     
     # Win/loss analysis
     wins = sum(1 for hc_r, schc_r in zip(hc_results, schc_results) if schc_r['final'] < hc_r['final'])
@@ -405,9 +405,9 @@ for lc_value in sorted(by_lc.keys()):
 
 print("="*80)
 print()
-print(f"✅ All results saved to: {RUN_DIR}")
-print(f"✅ Summary CSV: {summary_csv_path}")
-print(f"✅ Detailed logs: {RUN_DIR}/*_detailed.txt")
+print(f"All results saved to: {RUN_DIR}")
+print(f"Summary CSV: {summary_csv_path}")
+print(f"Detailed logs: {RUN_DIR}/*_detailed.txt")
 if HAS_MATPLOTLIB:
-    print(f"✅ Convergence plots: {RUN_DIR}/*.png")
+    print(f"Convergence plots: {RUN_DIR}/*.png")
 print()
