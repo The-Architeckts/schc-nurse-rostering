@@ -5,23 +5,36 @@ Represents nurses, contracts, shift types, etc.
 
 class ShiftType:
     '''Binary encoding for shifts'''
-    E = 16     # 0b10000 - Early
-    L = 8      # 0b01000 - Late
-    D = 4      # 0b00100 - Day
-    N = 2      # 0b00010 - Night
-    OFF = 1    # 0b00001 - Day off
+    DH = 32    # 0b100000 - Day Head/Holiday (NEW)
+    E = 16     # 0b010000 - Early
+    L = 8      # 0b001000 - Late
+    D = 4      # 0b000100 - Day
+    N = 2      # 0b000010 - Night
+    OFF = 1    # 0b000001 - Day off
     
     @staticmethod
     def from_string(shift_str):
-        '''Convert 'E', 'L', 'D', 'N' to binary'''
-        mapping = {'E': ShiftType.E, 'L': ShiftType.L, 
-                   'D': ShiftType.D, 'N': ShiftType.N}
+        '''Convert shift string to binary'''
+        mapping = {
+            'DH': ShiftType.DH,  # NEW
+            'E': ShiftType.E, 
+            'L': ShiftType.L, 
+            'D': ShiftType.D, 
+            'N': ShiftType.N
+        }
         return mapping.get(shift_str, ShiftType.OFF)
     
     @staticmethod
     def to_string(shift_int):
-        '''Convert binary back to 'E', 'L', 'D', 'N', '-' '''
-        mapping = {16: 'E', 8: 'L', 4: 'D', 2: 'N', 1: '-'}
+        '''Convert binary back to string'''
+        mapping = {
+            32: 'DH',  # NEW
+            16: 'E', 
+            8: 'L', 
+            4: 'D', 
+            2: 'N', 
+            1: '-'
+        }
         return mapping.get(shift_int, '?')
 
 
@@ -39,14 +52,26 @@ class Nurse:
 
 
 class Contract:
-    def __init__(self, id, counterConstraints, seriesConstraints, patternConstraints, 
-                 completeWeekends, identicalWeekends):
+    '''Represents a contract with constraints.'''
+    
+    def __init__(self, id, counterConstraints, seriesConstraints, 
+                 patternConstraints=None, completeWeekends=None, identicalWeekends=None):
         self.id = id
         self.counterConstraints = counterConstraints
         self.seriesConstraints = seriesConstraints
-        self.patternConstraints = patternConstraints
+        self.patternConstraints = patternConstraints if patternConstraints is not None else []
         self.completeWeekends = completeWeekends
         self.identicalWeekends = identicalWeekends
+    
+    @property
+    def unwantedPatterns(self):
+        '''Return pattern constraints (for compatibility with constraint checker).'''
+        if not self.patternConstraints:
+            return []
+        # Handle both list and dict formats
+        if isinstance(self.patternConstraints, list):
+            return self.patternConstraints
+        return []
     
     def __repr__(self):
         return f"Contract(id={self.id})"
