@@ -1,12 +1,14 @@
 # Errata and post-submission notes
 
 `SCHC_NRP_Dissertation.pdf` is the dissertation exactly as submitted and assessed in May 2026,
-and it is left unchanged. After submission, its figures were checked against the final raw
-results and code in this repository (`results/raw/`, `results/analysis/`). Where the two
-disagree, **the results and code in this repository are authoritative**, and the corrections
-are listed below.
+and it is left unchanged. After submission, its results tables and principal quantitative
+statements were checked against the final raw results and code in this repository
+(`results/raw/`, `results/analysis/`). Where the two disagree, **the results and code in this
+repository are authoritative**. The corrections are listed below, and all of them are applied
+in the revised edition, [`SCHC_NRP_Dissertation_revised.pdf`](SCHC_NRP_Dissertation_revised.pdf)
+(Appendix A of that edition lists them as well).
 
-All corrections can be checked with the scripts named in each item.
+Each correction can be checked with the scripts or queries named in the item.
 
 ---
 
@@ -42,14 +44,27 @@ For SCHC-all and SCHC-acp at Sprint scale, Table 4.1 omits the Lc = 1000 results
 
 They do not change the optimal Lc. Source: `results/analysis/summary_table.csv`.
 
-## 3. Definition of the effect size r (Table 4.4)
+## 3. Statistical method (Chapter 1, Section 3.7.3, Section 4.3, Table 4.4)
 
-The caption of Table 4.4 describes r as the matched-pairs rank-biserial correlation. The
-values reported were computed as r = |Z| / √N, where Z is recovered from the two-sided
-Wilcoxon p-value through the normal approximation (`experiments/analyse_results.py`,
-function `wilcoxon_test`). The reported numbers are correct for that definition; only the
-description is wrong. The two measures are related but not identical, so the values should not
-be compared directly with rank-biserial correlations reported elsewhere.
+The submitted text states that the Wilcoxon signed-rank tests were applied to paired
+per-instance mean penalties (n = 10 at Sprint, n = 5 at Medium and Long), and that the effect
+size r is the matched-pairs rank-biserial correlation. The analysis
+(`experiments/analyse_results.py`) actually:
+
+* applied the tests to **individual runs paired by instance and random seed**, giving
+  N = 100 pairs at Sprint and N = 50 at Medium and Long; and
+* computed **r = |Z| / √N**, with Z recovered from the two-sided p-value through the normal
+  approximation (Fritz, Morris and Richler, 2012).
+
+The reported statistics are correct for this method; only the description was wrong. The
+original description was also internally inconsistent: with n = 5, a two-sided Wilcoxon test
+cannot produce p < 0.05, yet p < 0.001 was reported at Medium and Long scale.
+
+Because runs on the same instance are not fully independent, the reported p-values are likely
+to overstate the strength of evidence compared with an analysis that treats instance as a
+grouping factor (for example a mixed-effects model). The direction of every main effect is
+consistent across individual instances, so the conclusions are not in doubt, but the p-values
+should be read as indicative. The revised edition adds this as a limitation.
 
 ## 4. Best results in Table 4.5
 
@@ -110,3 +125,37 @@ Consequences:
 
 A definitive check would be to export this study's best solutions in the INRC-I XML format and
 score them with the official competition validator. That has not yet been done.
+
+## 6. Description of the corrected implementation defect (Section 5.6.1)
+
+The submitted text says the initial SCHC-imp idle counter "was incorrectly resetting on any
+accepted move rather than exclusively on improving moves". This is the reverse of what the
+code shows. In the final implementation (`src/algorithms/schc.py`), the idle counter is reset
+by **any accepted move**, uniformly for all three variants; the correction made the tracking
+uniform across variants.
+
+## 7. Improving move rates (Section 5.3)
+
+The submitted text gives improving move rates at Sprint scale of 1.06, 9.35 and 5.92 percent
+for SCHC-imp, SCHC-all and SCHC-acp, and states that Lc = 25 for SCHC-imp corresponds to about
+2,500 iterations per bound update. Across all final Sprint runs at optimal Lc, the rates are
+**1.18, 9.02 and 5.70 percent**, and the measured iterations per bound update are **2,137** for
+SCHC-imp (Lc = 25) and **1,515** for SCHC-all (Lc = 1500). The argument in that section is
+unchanged by the corrected figures.
+
+```sql
+SELECT a.name, r.lc,
+       ROUND(100.0 * SUM(improving_moves) / SUM(iterations), 2) AS improving_pct,
+       ROUND(1.0 * SUM(iterations) / SUM(bound_updates), 0)     AS iters_per_update
+FROM runs r JOIN instances i USING (instance_id) JOIN algorithms a USING (algorithm_id)
+WHERE i.scale = 'sprint'
+  AND ((a.name = 'SCHC-imp' AND r.lc = 25) OR (a.name IN ('SCHC-all', 'SCHC-acp') AND r.lc = 1500))
+GROUP BY a.name, r.lc;
+```
+
+## 8. Citation of Bykov and Petrovic (2016)
+
+The submitted bibliography gives the SCHC paper as *Journal of Scheduling* 19(1):55 to 71 with
+DOI 10.1007/s10951-014-0391-z. The correct reference is *Journal of Scheduling* **19(4):479 to
+492**, DOI **10.1007/s10951-016-0469-x**.
+

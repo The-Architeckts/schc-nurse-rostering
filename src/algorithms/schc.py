@@ -3,7 +3,7 @@ Step Counting Hill Climbing (SCHC) algorithm for Nurse Rostering Problem.
 
 Based on: Bykov, Y., & Petrovic, S. (2016).
 "A Step Counting Hill Climbing Algorithm applied to University Examination Timetabling."
-Journal of Scheduling, 19(1), 55-71. doi:10.1007/s10951-014-0391-z
+Journal of Scheduling, 19(4), 479-492. doi:10.1007/s10951-016-0469-x
 
 Implements three variants:
 - SCHC-all: Update bound after every Lc total steps

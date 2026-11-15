@@ -21,3 +21,17 @@ logs/
 # Secrets
 .env
 config.ini
+
+# LaTeX build files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+dissertation/source/main.pdf
+dissertation/source/main.log

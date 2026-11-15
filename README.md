@@ -11,9 +11,9 @@ analysis and full write-up of a study applying the Step Counting Hill Climbing a
 benchmark (INRC-I). It provides the first systematic evaluation of all three SCHC variants
 on this benchmark.
 
-**Full dissertation:** [`dissertation/SCHC_NRP_Dissertation.pdf`](dissertation/SCHC_NRP_Dissertation.pdf)
-**Errata and post-submission corrections:** [`dissertation/ERRATA.md`](dissertation/ERRATA.md)
-**Interactive results dashboard:** <https://the-architeckts.github.io/schc-nurse-rostering/>
+* **Full dissertation:** [`dissertation/SCHC_NRP_Dissertation_revised.pdf`](dissertation/SCHC_NRP_Dissertation_revised.pdf) (revised edition, November 2026)
+* **As submitted (May 2026), with errata:** [`dissertation/`](dissertation/)
+* **Interactive results dashboard:** <https://the-architeckts.github.io/schc-nurse-rostering/>
 
 ---
 
@@ -118,7 +118,7 @@ make up the objective.
 ## Repository layout
 
 ```
-├── dissertation/            Full dissertation (PDF)
+├── dissertation/            Revised and submitted editions (PDF), errata, LaTeX source
 ├── src/                     Final implementation
 │   ├── models.py            Nurse, contract and shift type definitions
 │   ├── data_loader.py       INRC-I JSON instance loader
@@ -259,9 +259,12 @@ python -m pytest
   optimum is the best value within the tested range. Conversely, the best SCHC-imp value at Medium and Long scale is the
   smallest tested (15), so its true optimum there may lie lower still.
 * **Statistics.** Comparisons pair runs by instance and seed. The effect size r is derived
-  from the normal approximation of the Wilcoxon p-value, as r = |Z| / √N.
-* **Errata.** A few figures in the submitted dissertation differ from the final results; the
-  results in this repository take precedence. See [`dissertation/ERRATA.md`](dissertation/ERRATA.md).
+  from the normal approximation of the Wilcoxon p-value, as r = |Z| / √N. Runs on the same
+  instance are not fully independent, so the p-values are likely to overstate the evidence
+  somewhat; the direction of every main effect is, however, consistent across instances.
+* **Errata.** Several statements in the submitted dissertation differ from the final results
+  and code, which take precedence. They are listed in
+  [`dissertation/ERRATA.md`](dissertation/ERRATA.md) and corrected in the revised edition.
 
 ---
 
