@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCHC on the Nurse Rostering Problem: results dashboard</title>
+<style>
+  :root {
+    --surface-0: #f4f3ef; --surface-1: #fcfcfb; --border: #e4e3df;
+    --ink-1: #0b0b0b; --ink-2: #52514e; --ink-3: #7a7974; --grid: #ebeae6;
+    --s-all: #2a78d6; --s-acp: #eb6834; --s-imp: #1baf7a; --s-hc: #7a7974;
+    --hover: rgba(0,0,0,0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-0: #111110; --surface-1: #1a1a19; --border: #383835;
+      --ink-1: #f0efec; --ink-2: #c3c2b7; --ink-3: #94938b; --grid: #2a2a28;
+      --s-all: #3987e5; --s-acp: #d95926; --s-imp: #199e70; --s-hc: #94938b;
+      --hover: rgba(255,255,255,0.06);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-0); color: var(--ink-1);
+         font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 32px 20px 48px; }
+  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 650; }
+  h2 { font-size: 16px; margin: 0 0 2px; font-weight: 600; }
+  .sub { color: var(--ink-2); margin: 0 0 24px; }
+  .note { color: var(--ink-3); font-size: 12.5px; margin: 0 0 12px; }
+  a { color: var(--s-all); }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
+          padding: 18px 20px; margin-bottom: 16px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px; }
+  .kpi .label { color: var(--ink-2); font-size: 13px; }
+  .kpi .value { font-size: 32px; font-weight: 600; letter-spacing: -0.01em; }
+  .kpi .detail { color: var(--ink-3); font-size: 12.5px; }
+  .filters { display: flex; align-items: center; gap: 12px; margin: 28px 0 12px; flex-wrap: wrap; }
+  .filters .label { color: var(--ink-2); }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface-1); }
+  .seg button { border: 0; background: transparent; color: var(--ink-2); padding: 6px 14px; font: inherit; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--border); }
+  .seg button[aria-pressed="true"] { color: var(--ink-1); font-weight: 650; background: var(--hover); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; color: var(--ink-2); font-size: 13px; margin: 6px 0 4px; }
+  .legend span::before { content: ""; display: inline-block; width: 14px; height: 2px; margin-right: 6px;
+                         vertical-align: middle; background: var(--c); border-radius: 1px; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  svg text { fill: var(--ink-2); font-size: 11.5px; }
+  .tip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--ink-1);
+         border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;
+         box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: none; z-index: 10; min-width: 150px; }
+  .tip .row { display: flex; justify-content: space-between; gap: 14px; }
+  .tip .k { color: var(--ink-2); }
+  .tip strong { font-weight: 650; }
+  .tip .title { color: var(--ink-2); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .tip .title i { width: 12px; height: 2px; background: var(--c); display: inline-block; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { color: var(--ink-2); font-weight: 600; }
+  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+  tbody tr:hover { background: var(--hover); }
+  .scroll { overflow-x: auto; }
+  code { font-size: 12.5px; }
+  footer { color: var(--ink-3); font-size: 12.5px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Step Counting Hill Climbing on the Nurse Rostering Problem</h1>
+  <p class="sub">Results dashboard for a BSc dissertation (Bangor University, 2026). Every figure on this page
+    comes from SQL queries over the experiment database; see <code>sql/</code> in the repository.</p>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="card">
+    <h2>Penalty reduction relative to Hill Climbing, at each variant's optimal Lc</h2>
+    <p class="note">Query 1 (<code>sql/01_optimal_lc.sql</code>). Higher is better. All differences from HC are significant (Wilcoxon signed-rank, p &lt; 0.001).</p>
+    <div class="legend" id="legend1"></div>
+    <div id="bars"></div>
+  </section>
+
+  <div class="filters">
+    <span class="label">Problem scale</span>
+    <div class="seg" id="scaleFilter" role="group" aria-label="Problem scale"></div>
+  </div>
+
+  <section class="card">
+    <h2>Cost against quality across the Lc sweep</h2>
+    <p class="note">Query 3 (<code>sql/03_cost_quality_tradeoff.sql</code>). Each point is one Lc value, averaged over all instances and seeds at this scale. Down and to the left is better. Larger Lc buys quality for SCHC-all and SCHC-acp at a steeply rising cost; SCHC-imp is best at its smallest Lc.</p>
+    <div class="legend" id="legend2"></div>
+    <div id="frontier"></div>
+  </section>
+
+  <section class="card">
+    <h2>Head to head against Hill Climbing</h2>
+    <p class="note">Query 2 (<code>sql/02_head_to_head_vs_hc.sql</code>). Each SCHC run at its optimal Lc paired with the HC run on the same instance and seed.</p>
+    <div class="scroll"><table id="h2h"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Lc sweep detail</h2>
+    <p class="note">Query 3. Marginal penalty gain and extra run time for each step up in Lc.</p>
+    <div class="scroll"><table id="sweep"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Optimal Lc per variant and scale</h2>
+    <p class="note">Query 1, all scales.</p>
+    <div class="scroll"><table id="optimal"></table></div>
+  </section>
+
+  <footer>Absolute penalties are marginally optimistic (0 to 7 points) relative to the official INRC-I evaluator;
+    comparisons between algorithms are unaffected. Full details in the dissertation.</footer>
+</main>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const SCALES = ['sprint', 'medium', 'long'];
+const VARIANTS = ['SCHC-all', 'SCHC-acp', 'SCHC-imp'];
+const VAR_KEY = { 'SCHC-all': '--s-all', 'SCHC-acp': '--s-acp', 'SCHC-imp': '--s-imp', 'HC': '--s-hc' };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const colour = a => css(VAR_KEY[a]);
+const fmt = (v, d = 1) => v == null ? '' : Number(v).toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function text(parent, x, y, str, attrs = {}) {
+  const t = el('text', { x, y, ...attrs }, parent); t.textContent = str; return t;
+}
+
+// ---------- tooltip ----------
+const tip = document.getElementById('tip');
+function showTip(evt, title, key, rows) {
+  tip.replaceChildren();
+  const h = document.createElement('div'); h.className = 'title';
+  if (key) { const i = document.createElement('i'); i.style.setProperty('--c', colour(key)); h.appendChild(i); }
+  h.appendChild(document.createTextNode(title)); tip.appendChild(h);
+  for (const [k, v] of rows) {
+    const r = document.createElement('div'); r.className = 'row';
+    const s = document.createElement('strong'); s.textContent = v;
+    const l = document.createElement('span'); l.className = 'k'; l.textContent = k;
+    r.append(l, s); tip.appendChild(r);
+  }
+  tip.style.display = 'block';
+  const pad = 14, w = tip.offsetWidth, hgt = tip.offsetHeight;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  if (x + w > innerWidth - 8) x = evt.clientX - w - pad;
+  if (y + hgt > innerHeight - 8) y = evt.clientY - hgt - pad;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+const hideTip = () => { tip.style.display = 'none'; };
+
+function legend(id, items) {
+  const box = document.getElementById(id); box.replaceChildren();
+  for (const a of items) {
+    const s = document.createElement('span'); s.style.setProperty('--c', colour(a)); s.textContent = a; box.appendChild(s);
+  }
+}
+
+// ---------- KPIs ----------
+function kpis() {
+  const best = DATA.optimal.reduce((a, b) => b.pct_reduction_vs_hc > a.pct_reduction_vs_hc ? b : a);
+  const worst = DATA.optimal.reduce((a, b) => b.pct_reduction_vs_hc < a.pct_reduction_vs_hc ? b : a);
+  const minWin = DATA.headToHead.reduce((a, b) => b.win_rate_pct < a.win_rate_pct ? b : a);
+  const tiles = [
+    ['Runs analysed', DATA.kpi.runs.toLocaleString('en-GB'), `${DATA.kpi.instances} INRC-I instances, 10 seeds per configuration`],
+    ['CPU-hours of compute', fmt(DATA.kpi.cpu_hours, 0), 'Supercomputing Wales Falcon cluster'],
+    ['Penalty reduction vs HC', `${fmt(worst.pct_reduction_vs_hc)} to ${fmt(best.pct_reduction_vs_hc)}%`,
+      `Best: ${best.algorithm}, ${cap(best.scale)} scale`],
+    ['Paired runs won vs HC', `≥ ${fmt(minWin.win_rate_pct, 0)}%`, 'Every variant, every scale, at optimal Lc'],
+  ];
+  const box = document.getElementById('kpis');
+  for (const [label, value, detail] of tiles) {
+    const c = document.createElement('div'); c.className = 'card kpi';
+    for (const [cls, t] of [['label', label], ['value', value], ['detail', detail]]) {
+      const d = document.createElement('div'); d.className = cls; d.textContent = t; c.appendChild(d);
+    }
+    box.appendChild(c);
+  }
+}
+
+// ---------- bar chart (query 1) ----------
+function bars() {
+  const W = 1040, H = 300, m = { t: 24, r: 8, b: 32, l: 44 };
+  const host = document.getElementById('bars'); host.replaceChildren();
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img',
+    'aria-label': 'Grouped bar chart of percentage penalty reduction relative to Hill Climbing' }, host);
+  const iw = W - m.l - m.r, ih = H - m.t - m.b, yMax = 25;
+  const y = v => m.t + ih - (v / yMax) * ih;
+  for (let v = 0; v <= yMax; v += 5) {
+    el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: css('--grid') }, svg);
+    text(svg, m.l - 8, y(v) + 4, v + '%', { 'text-anchor': 'end' });
+  }
+  const groupW = iw / SCALES.length, barW = Math.min(64, groupW / 4.4), gap = 2;
+  SCALES.forEach((s, gi) => {
+    const cx = m.l + groupW * gi + groupW / 2;
+    text(svg, cx, H - 10, cap(s), { 'text-anchor': 'middle', style: `fill:${css('--ink-1')}` });
+    VARIANTS.forEach((a, vi) => {
+      const row = DATA.optimal.find(r => r.scale === s && r.algorithm === a);
+      const x = cx + (vi - 1.5) * (barW + gap) + gap / 2, v = row.pct_reduction_vs_hc;
+      const r = 4, top = y(v), base = y(0);
+      el('path', { d: `M${x},${base} V${top + r} Q${x},${top} ${x + r},${top} H${x + barW - r} Q${x + barW},${top} ${x + barW},${top + r} V${base} Z`,
+        fill: colour(a) }, svg);
+      text(svg, x + barW / 2, top - 6, fmt(v) + '%', { 'text-anchor': 'middle', style: `fill:${css('--ink-1')}` });
+      const hit = el('rect', { x: x - gap, y: m.t, width: barW + 2 * gap, height: ih, fill: 'transparent', tabindex: 0,
+        'aria-label': `${a}, ${s}: ${fmt(v)} percent reduction at Lc ${row.optimal_lc}` }, svg);
+      const show = e => { hit.setAttribute('fill', css('--hover'));
+        showTip(e, `${a} · ${cap(s)}`, a, [['Reduction vs HC', fmt(v) + '%'], ['Optimal Lc', row.optimal_lc],
+          ['Mean penalty', fmt(row.mean_penalty, 2)], ['HC mean penalty', fmt(row.hc_mean_penalty, 2)]]); };
+      hit.addEventListener('pointermove', show);
+      hit.addEventListener('focus', e => { const b = hit.getBoundingClientRect(); show({ clientX: b.right, clientY: b.top + 40 }); });
+      hit.addEventListener('pointerleave', () => { hit.setAttribute('fill', 'transparent'); hideTip(); });
+      hit.addEventListener('blur', () => { hit.setAttribute('fill', 'transparent'); hideTip(); });
+    });
+  });
+}
+
+// ---------- cost vs quality frontier (query 3) ----------
+function frontier(scale) {
+  const W = 1040, H = 380, m = { t: 16, r: 24, b: 44, l: 56 };
+  const host = document.getElementById('frontier'); host.replaceChildren();
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img',
+    'aria-label': `Mean penalty against mean run time per Lc value, ${scale} scale` }, host);
+  const rows = DATA.costQuality.filter(r => r.scale === scale);
+  const hc = DATA.hc.find(r => r.scale === scale);
+  const pts = rows.map(r => ({ a: r.algorithm, lc: r.lc, x: r.mean_seconds_per_run, y: r.mean_penalty }))
+    .concat([{ a: 'HC', lc: null, x: hc.mean_seconds, y: hc.mean_penalty }]);
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const lx0 = Math.log10(Math.min(...xs)) - 0.12, lx1 = Math.log10(Math.max(...xs)) + 0.12;
+  const ySpan = Math.max(...ys) - Math.min(...ys), y0 = Math.min(...ys) - ySpan * 0.08, y1 = Math.max(...ys) + ySpan * 0.08;
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const X = v => m.l + (Math.log10(v) - lx0) / (lx1 - lx0) * iw;
+  const Y = v => m.t + ih - (v - y0) / (y1 - y0) * ih;
+  const step = Math.pow(10, Math.floor(Math.log10(ySpan / 4))) * (ySpan / 4 / Math.pow(10, Math.floor(Math.log10(ySpan / 4))) > 2.5 ? 5 : 2);
+  for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) {
+    el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: css('--grid') }, svg);
+    text(svg, m.l - 8, Y(v) + 4, fmt(v, 0), { 'text-anchor': 'end' });
+  }
+  const TICKS = [1, 2, 5, 10, 20, 30, 60, 120, 300, 600, 1200, 1800, 3600, 7200];
+  const inRange = TICKS.filter(v => Math.log10(v) >= lx0 && Math.log10(v) <= lx1);
+  const shown = inRange.filter((v, i) => i === 0 || X(v) - X(inRange[i - 1]) > 60);
+  for (const v of shown) {
+    const lab = v >= 3600 ? fmt(v / 3600, 0) + ' h' : v >= 60 ? fmt(v / 60, 0) + ' min' : fmt(v, 0) + ' s';
+    text(svg, X(v), H - m.b + 18, lab, { 'text-anchor': 'middle' });
+    el('line', { x1: X(v), x2: X(v), y1: m.t + ih, y2: m.t + ih + 4, stroke: css('--ink-3') }, svg);
+  }
+  el('line', { x1: m.l, x2: W - m.r, y1: m.t + ih, y2: m.t + ih, stroke: css('--border') }, svg);
+  text(svg, m.l + iw / 2, H - 6, 'Mean run time per run (log scale)', { 'text-anchor': 'middle' });
+  text(svg, 14, m.t + ih / 2, 'Mean final penalty', { 'text-anchor': 'middle', transform: `rotate(-90 14 ${m.t + ih / 2})` });
+
+  for (const a of VARIANTS) {
+    const p = pts.filter(q => q.a === a).sort((u, v) => u.lc - v.lc);
+    el('polyline', { points: p.map(q => `${X(q.x)},${Y(q.y)}`).join(' '), fill: 'none', stroke: colour(a), 'stroke-width': 2 }, svg);
+    for (const q of p) el('circle', { cx: X(q.x), cy: Y(q.y), r: 4.5, fill: colour(a), stroke: css('--surface-1'), 'stroke-width': 2 }, svg);
+    const last = p[p.length - 1], first = p[0];
+    const lab = a === 'SCHC-imp' ? first : last;
+    text(svg, X(lab.x) + 9, Y(lab.y) + 4, `Lc ${lab.lc}`, { style: `fill:${css('--ink-2')}` });
+  }
+  const h = pts.find(q => q.a === 'HC');
+  el('circle', { cx: X(h.x), cy: Y(h.y), r: 5, fill: colour('HC'), stroke: css('--surface-1'), 'stroke-width': 2 }, svg);
+  text(svg, X(h.x) + 9, Y(h.y) + 4, 'HC', { style: `fill:${css('--ink-1')}` });
+
+  const ring = el('circle', { r: 8, fill: 'none', stroke: css('--ink-1'), 'stroke-width': 1.5, visibility: 'hidden' }, svg);
+  const overlay = el('rect', { x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent' }, svg);
+  overlay.addEventListener('pointermove', e => {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+    let best = null, bd = Infinity;
+    for (const q of pts) { const d = Math.hypot(X(q.x) - loc.x, Y(q.y) - loc.y); if (d < bd) { bd = d; best = q; } }
+    if (bd > 40) { ring.setAttribute('visibility', 'hidden'); hideTip(); return; }
+    ring.setAttribute('cx', X(best.x)); ring.setAttribute('cy', Y(best.y)); ring.setAttribute('visibility', 'visible');
+    const rows = [['Mean penalty', fmt(best.y, 2)], ['Mean run time', fmt(best.x, 1) + ' s']];
+    if (best.lc != null) rows.unshift(['Lc', best.lc]);
+    showTip(e, `${best.a} · ${cap(scale)}`, best.a, rows);
+  });
+  overlay.addEventListener('pointerleave', () => { ring.setAttribute('visibility', 'hidden'); hideTip(); });
+}
+
+// ---------- tables ----------
+function table(id, cols, rows) {
+  const t = document.getElementById(id); t.replaceChildren();
+  const thead = t.createTHead().insertRow();
+  for (const [, label] of cols) { const th = document.createElement('th'); th.textContent = label; thead.appendChild(th); }
+  const tb = t.createTBody();
+  for (const r of rows) {
+    const tr = tb.insertRow();
+    for (const [key, , f] of cols) tr.insertCell().textContent = f ? f(r[key]) : (r[key] ?? '');
+  }
+}
+const d2 = v => fmt(v, 2), d1 = v => fmt(v, 1), sc = v => cap(v);
+
+function render(scale) {
+  frontier(scale);
+  table('h2h', [['scale', 'Scale', sc], ['algorithm', 'Variant'], ['paired_runs', 'Pairs'], ['wins', 'Wins'], ['ties', 'Ties'],
+    ['losses', 'Losses'], ['win_rate_pct', 'Win rate (%)', d1], ['mean_penalty_saved', 'Mean penalty saved', d2]],
+    DATA.headToHead.filter(r => r.scale === scale));
+  table('sweep', [['scale', 'Scale', sc], ['algorithm', 'Variant'], ['lc', 'Lc'], ['mean_penalty', 'Mean penalty', d2],
+    ['mean_seconds_per_run', 'Mean run time (s)', d1], ['penalty_gain_vs_prev_lc', 'Gain vs previous Lc', d2],
+    ['extra_seconds_vs_prev_lc', 'Extra seconds', d1], ['seconds_per_point_gained', 'Seconds per point gained', d1]],
+    DATA.costQuality.filter(r => r.scale === scale));
+  document.querySelectorAll('#scaleFilter button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.scale === scale)));
+}
+
+function init() {
+  kpis();
+  legend('legend1', VARIANTS); legend('legend2', [...VARIANTS, 'HC']);
+  bars();
+  table('optimal', [['scale', 'Scale', sc], ['algorithm', 'Variant'], ['optimal_lc', 'Optimal Lc'],
+    ['mean_penalty', 'Mean penalty', d2], ['hc_mean_penalty', 'HC mean penalty', d2], ['pct_reduction_vs_hc', 'Reduction vs HC (%)', d1]],
+    DATA.optimal);
+  const seg = document.getElementById('scaleFilter');
+  for (const s of SCALES) {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.scale = s; b.textContent = cap(s);
+    b.addEventListener('click', () => render(s)); seg.appendChild(b);
+  }
+  render('sprint');
+}
+init();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  const cur = document.querySelector('#scaleFilter [aria-pressed="true"]').dataset.scale;
+  legend('legend1', VARIANTS); legend('legend2', [...VARIANTS, 'HC']); bars(); render(cur);
+});
+</script>
+</body>
+</html>

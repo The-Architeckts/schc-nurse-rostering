@@ -1,5 +1,7 @@
 # Step Counting Hill Climbing for the Nurse Rostering Problem
 
+[![CI](https://github.com/The-Architeckts/schc-nurse-rostering/actions/workflows/ci.yml/badge.svg)](https://github.com/The-Architeckts/schc-nurse-rostering/actions/workflows/ci.yml)
+
 BSc (Hons) Computer Science dissertation, Bangor University, 2026. Awarded a First.
 Supervisor: Dr Mosab Bazargani.
 
@@ -10,6 +12,7 @@ benchmark (INRC-I). It provides the first systematic evaluation of all three SCH
 on this benchmark.
 
 **Full dissertation:** [`dissertation/SCHC_NRP_Dissertation.pdf`](dissertation/SCHC_NRP_Dissertation.pdf)
+**Interactive results dashboard:** <https://the-architeckts.github.io/schc-nurse-rostering/>
 
 ---
 
@@ -109,6 +112,8 @@ make up the objective.
 │   ├── run_instance_sweep.py    Runs HC + all SCHC variants over the Lc sweep for one instance
 │   ├── slurm/                   Slurm job arrays used on Falcon (sprint, medium, long)
 │   ├── analyse_results.py       Descriptive statistics and Wilcoxon tests
+│   ├── build_database.py        Loads all runs into SQLite (results/schc_results.db)
+│   ├── build_dashboard.py       Builds docs/index.html from the SQL queries
 │   ├── plot_results.py          Figures shown above
 │   ├── validate_penalty.py      Checks the penalty function against published best-known solutions
 │   ├── generate_per_instance_table.py   Per-instance LaTeX table used in the dissertation
@@ -116,11 +121,15 @@ make up the objective.
 ├── results/
 │   ├── raw/                 Per-instance results.csv and checkpoint logs from Falcon (2,800 runs)
 │   ├── analysis/            Output of analyse_results.py
+│   ├── schc_results.db      SQLite database of every run
 │   └── figures/
+├── sql/                     Database schema and the three analysis queries
+├── docs/                    Results dashboard (GitHub Pages)
 ├── data/
 │   ├── inrc1/               INRC-I instances (JSON)
 │   └── toffolo_bks/         Best-known solutions used for penalty validation
-├── tests/                   Regression tests
+├── tests/                   Test suite (see TESTING.md)
+├── .github/workflows/       Continuous integration
 └── archive/                 Earlier development work, kept for the record (see below)
 ```
 
@@ -138,7 +147,7 @@ pip install -r requirements.txt
 **Quick checks (seconds):**
 
 ```bash
-python -m pytest tests/                 # includes exact reproduction of two Falcon runs
+python -m pytest                        # full test suite, see TESTING.md
 python experiments/validate_penalty.py  # penalty function vs published best-known solutions
 python experiments/analyse_results.py   # regenerates results/analysis/ from results/raw/
 python experiments/plot_results.py      # regenerates results/figures/
@@ -168,6 +177,51 @@ recommended.
 
 ---
 
+## Results database and SQL
+
+Every run is also available in a normalised SQLite database, `results/schc_results.db`
+(schema: [`sql/schema.sql`](sql/schema.sql)), with tables for instances, algorithms and runs
+and a summary view per configuration. Three queries answer the main questions of the study:
+
+| Query | Question | Techniques |
+|---|---|---|
+| [`01_optimal_lc.sql`](sql/01_optimal_lc.sql) | Which Lc is optimal for each variant and scale, and how much does it beat HC by? | CTEs, `RANK()` window function, joins |
+| [`02_head_to_head_vs_hc.sql`](sql/02_head_to_head_vs_hc.sql) | Paired by instance and seed, how often does each variant beat HC? | Chained CTEs, self-join of the runs table, conditional aggregation |
+| [`03_cost_quality_tradeoff.sql`](sql/03_cost_quality_tradeoff.sql) | What does each step up in Lc cost in run time, and what does it buy? | `LAG()` over a named window |
+
+```bash
+sqlite3 results/schc_results.db < sql/02_head_to_head_vs_hc.sql
+```
+
+The [dashboard](https://the-architeckts.github.io/schc-nurse-rostering/) is generated from these
+queries by `experiments/build_dashboard.py` and has no external dependencies. To rebuild both:
+
+```bash
+python experiments/build_database.py
+python experiments/build_dashboard.py
+```
+
+Query 2 adds a finding that the mean comparisons do not show directly: at the optimal Lc, each
+SCHC variant beats HC in at least 96 of 100 paired Sprint runs and in every paired Medium and
+Long run. Query 3 quantifies the diminishing returns of larger Lc: for SCHC-acp at Long scale,
+the final step from Lc 1500 to 2500 costs about 1,070 extra seconds per penalty point gained.
+
+---
+
+## Testing
+
+The test suite checks that every reported number can be regenerated from the code and raw data,
+and runs on every push through GitHub Actions. It covers the penalty function, exact reproduction
+of Falcon runs from their seeds, database integrity, agreement between the SQL queries and the
+independent pandas analysis, and freshness of all committed outputs. See
+[`TESTING.md`](TESTING.md) for what each test protects against.
+
+```bash
+python -m pytest
+```
+
+---
+
 ## Validity notes and limitations
 
 * **Penalty function.** Evaluating the published best-known solutions of Toffolo et al. with
@@ -179,7 +233,8 @@ recommended.
   value tested (1500 at Sprint, 2500 at Medium and Long), and the curves above are still
   falling there. Larger Lc may
   give further gains at proportionally higher cost; the reported optimum is the best value
-  within the tested range.
+  within the tested range. Conversely, the best SCHC-imp value at Medium and Long scale is the
+  smallest tested (15), so its true optimum there may lie lower still.
 * **Statistics.** Comparisons pair runs by instance and seed. The effect size r is derived
   from the normal approximation of the Wilcoxon p-value, as r = |Z| / √N.
 * **Comparison with published methods** (Section 4.4 of the dissertation) is indicative only,

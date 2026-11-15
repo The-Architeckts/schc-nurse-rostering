@@ -1,0 +1,49 @@
+# Continuous integration: runs on every push and pull request.
+#
+# 1. Installs the project on a clean Ubuntu machine with Python 3.12.
+# 2. Runs the test suite (tests/), which checks the algorithms, the
+#    penalty function, the SQL database and queries, and that every
+#    committed output (analysis tables, report, dashboard) can be
+#    regenerated exactly from the committed raw data.
+# 3. Runs each command-line script once to make sure it still works.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:        # allows a manual run from the Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run the test suite
+        run: python -m pytest -v --durations=5
+
+      - name: Smoke-test the command-line scripts
+        run: |
+          python experiments/validate_penalty.py
+          python experiments/build_database.py "$RUNNER_TEMP/results.db" > /dev/null
+          python experiments/build_dashboard.py "$RUNNER_TEMP/results.db" "$RUNNER_TEMP/index.html"
+          python experiments/analyse_results.py "$RUNNER_TEMP/analysis" > /dev/null
+          python experiments/plot_results.py
