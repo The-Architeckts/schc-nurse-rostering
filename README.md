@@ -303,6 +303,26 @@ INRC-I instances: Haspeslagh, De Causmaecker, Schaerf and Stølevik (2014), *The
 international nurse rostering competition 2010*, Annals of Operations Research 218(1).
 Best-known solutions: Toffolo et al., <https://benchmark.gent.cs.kuleuven.be/nrp>.
 
+## Use of AI tools
+
+This project was conceived, designed and directed by me. The research questions,
+experimental design, choice of algorithm variants and parameter ranges, code architecture,
+execution of all experiments on the Falcon HPC cluster, debugging, and the interpretation of
+the results are my own, as are all key research decisions.
+
+Claude, an AI model developed by Anthropic, was used during development as an implementation
+and debugging aid. It generated snippets of code to my specification and within my own
+design, helped to diagnose errors, and assisted in examining experimental output to trace
+problems to their source. All AI-assisted code was reviewed, understood and validated by me
+before use. Its role was to accelerate implementation, so that a project of this scope
+could be completed within the time available; it did not determine the direction or content
+of the research.
+
+After submission, Claude also assisted in preparing this repository for publication. That
+work included organising the material, drafting documentation, building the SQLite database,
+dashboard and continuous integration, and auditing the dissertation against the final results,
+which produced the corrections listed in `dissertation/ERRATA.md`.
+
 ## Licence
 
 The source code is released under the MIT Licence (see [`LICENSE`](LICENSE)). The
