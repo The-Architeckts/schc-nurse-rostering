@@ -1,1 +1,7 @@
-No external dependencies currently required# Using Python 3.12+ standard library only# Future dependencies for analysis/visualization:# numpy>=1.24.0# matplotlib>=3.7.0# pandas>=2.0.0
+# The algorithms use the Python 3.12 standard library only.
+# These packages are needed for the analysis, figures and tests.
+pandas>=2.0
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.7
+pytest>=8.0

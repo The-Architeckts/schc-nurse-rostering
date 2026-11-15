@@ -20,7 +20,7 @@ def load_instance(filepath):
             id=contract_data['id'],
             counterConstraints=contract_data['counterConstraints'],
             seriesConstraints=contract_data['seriesConstraints'],
-            patternConstraints=contract_data['patternConstraints'],
+            patternConstraints=contract_data.get('patternConstraints', []),
             completeWeekends=contract_data.get('completeWeekends'),
             identicalWeekends=contract_data.get('identicalWeekends')
         )

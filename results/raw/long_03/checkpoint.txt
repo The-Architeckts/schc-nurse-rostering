@@ -1,0 +1,15 @@
+[2026-04-27 17:02:12] Started INRC1_long03
+[2026-04-27 17:15:54] HC complete  avg=259.1
+[2026-04-27 18:22:31] SCHC-all Lc=500 complete
+[2026-04-27 20:37:22] SCHC-all Lc=1000 complete
+[2026-04-28 00:02:31] SCHC-all Lc=1500 complete
+[2026-04-28 05:49:04] SCHC-all Lc=2500 complete
+[2026-04-28 08:09:20] SCHC-acp Lc=500 complete
+[2026-04-28 12:55:14] SCHC-acp Lc=1000 complete
+[2026-04-28 20:05:08] SCHC-acp Lc=1500 complete
+[2026-04-29 07:40:11] SCHC-acp Lc=2500 complete
+[2026-04-29 09:52:27] SCHC-imp Lc=15 complete
+[2026-04-29 12:36:07] SCHC-imp Lc=25 complete
+[2026-04-29 15:56:29] SCHC-imp Lc=40 complete
+[2026-04-29 19:31:45] SCHC-imp Lc=50 complete
+[2026-04-29 19:31:45] Complete 50.49h

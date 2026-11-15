@@ -1,0 +1,13 @@
+scale,algorithm,optimal_lc,mean,std,vs_hc,sig
+sprint,HC,N/A,63.4,4.83,0.0,baseline
+sprint,SCHC-all,1500,57.38,2.99,-6.02,***
+sprint,SCHC-acp,1500,55.24,3.07,-8.16,***
+sprint,SCHC-imp,25,54.41,2.43,-8.99,***
+medium,HC,N/A,304.86,28.6,0.0,baseline
+medium,SCHC-all,2500,265.16,26.89,-39.7,***
+medium,SCHC-acp,2500,260.04,26.47,-44.82,***
+medium,SCHC-imp,15,260.52,25.93,-44.34,***
+long,HC,N/A,292.88,35.44,0.0,baseline
+long,SCHC-all,2500,238.88,36.61,-54.0,***
+long,SCHC-acp,2500,232.46,38.93,-60.42,***
+long,SCHC-imp,15,238.62,37.96,-54.26,***

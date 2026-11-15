@@ -1,4 +1,23 @@
-# Python__pycache__/*.pyc*.pyo*.pyd.Python*.so# 
-IDEs.vscode/.idea/*.swp*.swo# 
-OS.DS_StoreThumbs.dbdesktop.ini# Results/outputsresults/
-outputs/*.log# Potentially sensitiveconfig.ini.env
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# IDEs and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local experiment output (final results live in results/)
+outputs/
+logs/
+*.log
+
+# Secrets
+.env
+config.ini

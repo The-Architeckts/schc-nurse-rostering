@@ -1,0 +1,75 @@
+================================================================================
+STATISTICAL ANALYSIS REPORT
+SCHC Applied to INRC-I Nurse Rostering Problem
+Generated: 2026-05-04 16:06:43
+================================================================================
+
+================================================================================
+SPRINT INSTANCES  (n=10 instances x 10 runs)
+================================================================================
+HC baseline:  mean=63.40  std=4.83
+
+Algorithm        Opt Lc     Mean     Std    Best   Worst    vs HC    p-value   sig
+--------------------------------------------------------------------------------
+SCHC-all           1500    57.38    2.99      51      64    -6.02     0.0000   ***
+SCHC-acp           1500    55.24    3.07      50      65    -8.16     0.0000   ***
+SCHC-imp             25    54.41    2.43      50      60    -8.99     0.0000   ***
+
+Pairwise comparisons (Wilcoxon signed-rank, at optimal Lc):
+  Comparison                 Mean diff    p-value   Effect r   sig
+  ------------------------------------------------------------
+  SCHC-acp vs SCHC-all           -2.14     0.0000     0.6600   ***
+  SCHC-imp vs SCHC-all           -2.97     0.0000     0.8269   ***
+  SCHC-imp vs SCHC-acp           -0.83     0.0001     0.3799   ***
+
+================================================================================
+MEDIUM INSTANCES  (n=5 instances x 10 runs)
+================================================================================
+HC baseline:  mean=304.86  std=28.60
+
+Algorithm        Opt Lc     Mean     Std    Best   Worst    vs HC    p-value   sig
+--------------------------------------------------------------------------------
+SCHC-all           2500   265.16   26.89     246     324   -39.70     0.0000   ***
+SCHC-acp           2500   260.04   26.47     242     316   -44.82     0.0000   ***
+SCHC-imp             15   260.52   25.93     242     316   -44.34     0.0000   ***
+
+Pairwise comparisons (Wilcoxon signed-rank, at optimal Lc):
+  Comparison                 Mean diff    p-value   Effect r   sig
+  ------------------------------------------------------------
+  SCHC-acp vs SCHC-all           -5.12     0.0000     0.7772   ***
+  SCHC-imp vs SCHC-all           -4.64     0.0000     0.7607   ***
+  SCHC-imp vs SCHC-acp           +0.48     0.2705     0.1558  n.s.
+
+================================================================================
+LONG INSTANCES  (n=5 instances x 10 runs)
+================================================================================
+HC baseline:  mean=292.88  std=35.44
+
+Algorithm        Opt Lc     Mean     Std    Best   Worst    vs HC    p-value   sig
+--------------------------------------------------------------------------------
+SCHC-all           2500   238.88   36.61     187     294   -54.00     0.0000   ***
+SCHC-acp           2500   232.46   38.93     179     289   -60.42     0.0000   ***
+SCHC-imp             15   238.62   37.96     186     296   -54.26     0.0000   ***
+
+Pairwise comparisons (Wilcoxon signed-rank, at optimal Lc):
+  Comparison                 Mean diff    p-value   Effect r   sig
+  ------------------------------------------------------------
+  SCHC-acp vs SCHC-all           -6.42     0.0000     0.7424   ***
+  SCHC-imp vs SCHC-all           -0.26     0.9171     0.0147  n.s.
+  SCHC-imp vs SCHC-acp           +6.16     0.0000     0.7910   ***
+
+================================================================================
+Lc SENSITIVITY ANALYSIS
+================================================================================
+
+Optimal Lc per variant per scale:
+  Scale        SCHC-all   SCHC-acp   SCHC-imp
+  --------------------------------------------
+  sprint           1500       1500         25
+  medium           2500       2500         15
+  long             2500       2500         15
+
+Key finding: SCHC-imp optimal Lc is scale-invariant (~15-25),
+while SCHC-all and SCHC-acp optimal Lc is consistently 1500-2500.
+This reflects SCHC-imp's low improving move rate on the NRP (~1-10%),
+requiring a smaller Lc to achieve equivalent bound update frequency.

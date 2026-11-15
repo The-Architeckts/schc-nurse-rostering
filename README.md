@@ -1,378 +1,229 @@
+# Step Counting Hill Climbing for the Nurse Rostering Problem
 
-# Applying Step Counting Hill Climbing to Nurse Rostering Problem
-**Undergraduate Dissertation Project**
-**Author:** Arthur Armstrong
-**Institution:** Bangor University
-**Academic Year:** 2025/2026
+BSc (Hons) Computer Science dissertation, Bangor University, 2026. Awarded a First.
+Supervisor: Dr Mosab Bazargani.
+
+This repository contains the implementation, experimental pipeline, raw results, statistical
+analysis and full write-up of a study applying the Step Counting Hill Climbing algorithm
+(SCHC; Bykov and Petrovic, 2016) to the First International Nurse Rostering Competition
+benchmark (INRC-I). It provides the first systematic evaluation of all three SCHC variants
+on this benchmark.
+
+**Full dissertation:** [`dissertation/SCHC_NRP_Dissertation.pdf`](dissertation/SCHC_NRP_Dissertation.pdf)
+
 ---
-## Project Overview
-This dissertation explores the novel application of the **Step Counting Hill Climbing (SCHC)** algorithm to the **Nurse Rostering Problem (NRP)**. No prior published work has applied SCHC to NRP, representing a clear research gap in optimisation literature.
-The project uses the **INRC-I (First International Nurse Rostering Competition)** benchmark instances as the testing framework.
-### Research Questions
-1. **Can SCHC effectively optimise nurse rostering schedules?**
-2. **How does SCHC compare to standard Hill Climbing (HC)?**
-3. **Which neighbourhood operators are most effective for NRP?**
-4. **Does the step counting mechanism (Lc) improve solution quality over greedy HC?**
+
+## Headline findings
+
+The three SCHC variants were compared against a Hill Climbing (HC) baseline on all 20 INRC-I
+early instances (10 Sprint, 5 Medium, 5 Long), with a sweep over the step counter limit
+Lc and 10 seeded runs per configuration. In total, 2,800 runs were performed, consuming
+approximately 390 CPU-hours on the Supercomputing Wales Falcon cluster.
+
+1. **All three SCHC variants significantly outperform Hill Climbing at every scale**, reducing
+   mean penalty by 9.5 to 20.6 percent (Wilcoxon signed-rank, p < 0.001, effect size r > 0.84
+   in every case).
+2. **SCHC-acp is the most consistently effective variant.** It is best at Long scale and
+   statistically equivalent to SCHC-imp at Medium scale (p = 0.27).
+3. **SCHC-imp is best at Sprint scale**, and its optimal Lc is approximately scale-invariant
+   (25 at Sprint, 15 at Medium and Long). The optimal Lc of SCHC-all and SCHC-acp instead
+   grows with problem size (1500 to 2500).
+4. **The scale-invariance of SCHC-imp is explained by the NRP landscape.** Improving moves make
+   up roughly 1 percent of iterations, so the SCHC-imp counter advances slowly and its
+   effective bound-update frequency decouples from the nominal Lc. As improving moves become
+   rarer at Long scale, SCHC-imp falls back to statistical equivalence with SCHC-all
+   (p = 0.92).
+
+![Mean penalty reduction relative to HC](results/figures/improvement_over_hc.png)
+
+![Mean penalty against Lc for each variant and scale](results/figures/lc_sensitivity.png)
+
+### Results at the optimal Lc
+
+Mean final penalty over all instances and runs at each scale (lower is better).
+
+| Scale | HC | SCHC-all | SCHC-acp | SCHC-imp |
+|---|---|---|---|---|
+| Sprint (10 instances × 10 runs) | 63.40 | 57.38 (Lc 1500) | 55.24 (Lc 1500) | **54.41** (Lc 25) |
+| Medium (5 × 10) | 304.86 | 265.16 (Lc 2500) | **260.04** (Lc 2500) | 260.52 (Lc 15) |
+| Long (5 × 10) | 292.88 | 238.88 (Lc 2500) | **232.46** (Lc 2500) | 238.62 (Lc 15) |
+
+Pairwise comparisons between variants (Wilcoxon signed-rank at optimal Lc):
+
+| Scale | acp vs all | imp vs all | imp vs acp |
+|---|---|---|---|
+| Sprint | acp better, p < 0.001 | imp better, p < 0.001 | imp better, p < 0.001 |
+| Medium | acp better, p < 0.001 | imp better, p < 0.001 | not significant, p = 0.27 |
+| Long | acp better, p < 0.001 | not significant, p = 0.92 | acp better, p < 0.001 |
+
+The full tables are in [`results/analysis/`](results/analysis/), and the report printed by
+the analysis script is [`results/analysis/analysis_report.txt`](results/analysis/analysis_report.txt).
+
 ---
-## Current Status
-✅ **Completed:**
-- Data loading and parsing (INRC-I JSON format)
-- Solution representation (2D matrix, binary shift encoding)
-- Greedy baseline constructor
-- Complete constraint evaluation (7 soft + 2 hard constraints)
-- Neighbourhood operators (6 high-performing operators)
-- Hill Climbing implementation (baseline for SCHC comparison)
-- Comprehensive testing framework
 
-⏳ **In Progress:**
-- SCHC implementation (Lc > 0)
+## The algorithm
 
-❌ **Planned:**
-- HC vs SCHC comparison
-- Scaling to medium/long instances
-- Statistical analysis
-- Final dissertation write-up
+SCHC is a single-parameter local search. It keeps a cost bound and accepts any candidate
+whose penalty is strictly below that bound. Every Lc counted steps, the bound is reset to the
+current penalty. The variants differ only in what is counted:
+
+| Variant | Counter advances on |
+|---|---|
+| SCHC-all | every iteration |
+| SCHC-acp | every accepted move |
+| SCHC-imp | every improving move |
+
+Termination rules (all empirically calibrated, see Section 3.6 of the dissertation):
+
+* **HC:** stop after 2,000 consecutive non-improving iterations.
+* **SCHC-all and SCHC-acp:** stop when the idle counter exceeds 100 and also exceeds 1 percent
+  of total iterations. The idle counter resets on any accepted move.
+* **SCHC-imp:** stop when no new best solution has been found for max(30000, 500 × Lc)
+  iterations. The adaptive rule above cannot fire for SCHC-imp on the NRP, because rare bound
+  updates keep the bound high, so non-improving moves keep being accepted and the idle
+  counter keeps resetting.
+
+The search starts from a feasible greedy construction and uses six swap-based neighbourhood
+operators that preserve feasibility. Hard constraints (coverage and one shift per nurse per
+day) are penalised at 10<sup>6</sup> per violation; the seven INRC-I soft constraint types
+(counters, series, patterns, complete and identical weekends, shift-off and day-off requests)
+make up the objective.
+
 ---
-## Key Results (Preliminary - Sprint01 Instance)
 
-**Baseline Solution:**
-- Penalty: 254 (feasible)
-- Generated using greedy round-robin constructor
+## Repository layout
 
-**Hill Climbing Optimisation:**
-- Final penalty: 63-68 (best: 63)
-- Improvement: 73-75% (186-191 penalty reduction)
-- Convergence: ~4,200 iterations, ~2.5 seconds
-- Very consistent: StdDev = 2.7 across 10 runs
-
-**Constraint-Level Improvements:**
-- Series constraints: 102 → 2 (98% reduction) ⭐
-- Pattern constraints: 19 → 0 (100% elimination) ⭐
-- Complete weekends: 32 → 6 (81% reduction)
-- Time-off requests: 63 → 29 (54% reduction)
-- Counter constraints: 32 → 30 (6% reduction)
-
-**Most Effective Operators:**
-1. Swap Pattern (4.4% acceptance rate)
-2. Three-Nurse Rotation (4.2% acceptance rate)
-3. Cyclic Swap (3.2% acceptance rate)
----
-## Project Structure
-Code/
-
+```
+├── dissertation/            Full dissertation (PDF)
+├── src/                     Final implementation
+│   ├── models.py            Nurse, contract and shift type definitions
+│   ├── data_loader.py       INRC-I JSON instance loader
+│   ├── solution.py          2D nurse × day solution representation
+│   ├── constructors.py      Greedy feasible baseline constructor
+│   ├── constraints.py       Hard and soft constraint evaluation (penalty function)
+│   ├── operators.py         Neighbourhood operators
+│   └── algorithms/
+│       ├── hill_climbing.py
+│       └── schc.py          SCHC with all three variants
+├── experiments/
+│   ├── run_instance_sweep.py    Runs HC + all SCHC variants over the Lc sweep for one instance
+│   ├── slurm/                   Slurm job arrays used on Falcon (sprint, medium, long)
+│   ├── analyse_results.py       Descriptive statistics and Wilcoxon tests
+│   ├── plot_results.py          Figures shown above
+│   ├── validate_penalty.py      Checks the penalty function against published best-known solutions
+│   ├── generate_per_instance_table.py   Per-instance LaTeX table used in the dissertation
+│   └── pre_sweep_validation.py  Verbose single-instance run used to check variant behaviour
+├── results/
+│   ├── raw/                 Per-instance results.csv and checkpoint logs from Falcon (2,800 runs)
+│   ├── analysis/            Output of analyse_results.py
+│   └── figures/
 ├── data/
-
-│ └── inrc1/
-
-│ ├── INRC1_sprint01.json # Test instance (10 nurses, 28 days)
-
-│ └── [other instances...]
-
-│
-
-├── src/
-
-│ ├── algorithms/
-
-│ │ ├── **init**.py
-
-│ │ └── hill_climbing.py # HC and Steepest Descent HC
-
-│ │
-
-│ ├── tests/
-
-│ │ ├── **init**.py
-
-│ │ ├── test_hc.py # HC comprehensive testing
-
-│ │ ├── test_operators.py # Operator validation
-
-│ │ ├── test_hard_constraints.py # Hard constraint testing
-
-│ │ └── data_analyser.py # Baseline analysis
-
-│ │
-
-│ ├── models.py # Data structures (Nurse, Contract, ShiftType)
-
-│ ├── data_loader.py # INRC-I JSON parsing
-
-│ ├── solution.py # 2D matrix solution representation
-
-│ ├── constraints.py # Constraint evaluation (all 7+2 types)
-
-│ ├── constructors.py # Greedy baseline constructor
-
-│ └── operators.py # 6 neighbourhood operators
-
-│
-
-├── docs/ # Documentation and reports
-
-├── README.md # This file
-
-└── .gitignore
-
-## Implementation Details
-### Constraint Evaluation
-**Hard Constraints (Must be satisfied):**
-- ✅ Coverage requirements: All shifts adequately staffed
-- ✅ Single assignment: Max one shift per nurse per day
-- **Penalty:** 10⁶ per violation (ensures feasibility maintained)
-
-**Soft Constraints (Minimise violations):**
-- ✅ Counter constraints: Min/max days worked per contract
-- ✅ Series constraints: Min/max consecutive working/idle days
-- ✅ Pattern constraints: Forbidden shift sequences (e.g., Late→Day)
-- ✅ Complete weekends: Work all or no days of weekend
-- ✅ Identical weekends: Same shift type on all weekend days
-- ✅ Shift-off requests: Nurse prefers not to work specific shift
-- ✅ Time-off requests: Nurse requests complete day off
-- **Penalty:** +1 per violation
-
-**Total Penalty Formula:**
-```
-penalty = (hard_violations × 10⁶) + soft_violations
-```
-### Neighbourhood Operators
-6 operators retained after testing:
-1. **Swap Shifts (Same Day)** - Exchange two nurses' shifts on one day
-2. **Swap All Shifts (Two Days)** - 2×2 swap pattern between nurses
-3.  **Cyclic Swap** - 4-way rotation between 2 nurses, 2 days
-4.  **Move Pattern** - Move 2-3 consecutive shifts between nurses
-5.  **Swap Pattern** - Exchange 2-3 consecutive shifts between nurses
-6.  **Three-Nurse Rotation** - Rotate shifts among 3 nurses on one day
-	
-  **Design principles:**
-	- All swap-based (maintain coverage)
-	- All feasibility-preserving (no hard constraint violations)
-	- Pattern-based operators most effective (target series constraints)
-	
-  **Removed operators:**
-	- ❌ Single Shift Change (0% feasibility - breaks coverage)
-	- ❌ Change Shift Type (0% feasibility - breaks coverage)
-	- ❌ Swap Shifts (Same Nurse) (0% acceptance - ineffective)
-
-  ### Hill Climbing Algorithm
-
-  **Standard HC (Random Operator Selection):**
-	
-  ```python
-	while idle_iterations < max_idle:
-	    neighbor = random_operator(current_solution)
-	    if penalty(neighbor) < penalty(current):
-	        current = neighbor  # Accept (greedy)
-	        idle_iterations = 0
-	    else:        
-	idle_iterations += 1
+│   ├── inrc1/               INRC-I instances (JSON)
+│   └── toffolo_bks/         Best-known solutions used for penalty validation
+├── tests/                   Regression tests
+└── archive/                 Earlier development work, kept for the record (see below)
 ```
 
-**Steepest Descent HC (Best Operator Selection):**
-
-```python
-while idle_iterations < max_idle:    
-    best_neighbor = None    
-    for operator in all_operators:        
-        neighbor = operator(current_solution)        
-    if penalty(neighbor) < penalty(best_neighbor):
-            best_neighbor = neighbor        
-    if penalty(best_neighbor) < penalty(current):
-        current = best_neighbor  # Accept best        
-    idle_iterations = 0    
-else:        
-    idle_iterations += 1
-```
-
-**Convergence:** Stops after 1,000 consecutive non-improving iterations
 ---
 
-## How to Run
-### Prerequisites
-- Python 3.12+ (no external dependencies for core functionality)- Optional: `matplotlib` for convergence plots
-### Running the Tests
+## Reproducing the results
+
+Python 3.12 is required. The algorithms use only the standard library; the analysis and
+figures need the packages in `requirements.txt`.
+
 ```bash
-# Navigate to project root
-cd Code/
-# Run baseline analysis
-python src/tests/data_analyser.py
-# Test neighbourhood operators
-python src/tests/test_operators.py
-# Test hard constraints
-python src/tests/test_hard_constraints.py
-# Run Hill Climbing optimisation
-python src/tests/test_hc.py
+pip install -r requirements.txt
 ```
-### Expected Output
-**HC Test Output:**
-- Original baseline schedule visualisation
-- Optimisation progress (penalty reduction over time)
-- Operator usage statistics
-- Final optimised schedule
-- Constraint breakdown comparison
-- Convergence plot (saved as `hc_convergence.png`)
----
-## Key Findings
-### 1. Operator Design Matters
-**Successful patterns:**
-- ✅ Pattern-based (2-3 consecutive shifts)
-- ✅ Multi-nurse (2-3 nurses involved)
-- ✅ Swap-based (exchange, not add/remove)
-**Unsuccessful patterns:**
-- ❌ Single-shift changes (break coverage)
-- ❌ Single-nurse focus (can't solve inter-nurse problems)
-### 2. Series Constraints Dominate
-- **40%** of baseline penalty from series violations
-- **98%** reduction achieved by HC
-- Pattern-based operators specifically target this
-### 3. Counter Constraints Are Stubborn
-- Only **6%** reduction possible
-- Fundamental structural constraint
-- Trade-off with coverage requirements
-- Expected behaviour (literature confirms)
-### 4. High Consistency Achieved
-- Standard deviation: 2.7 (only 4% variance)
-- All 10 runs achieved >70% improvement
-- Algorithm is reliable and repeatable
----
-## Technical Decisions & Rationale
-### Why 2D Matrix Representation?
-- **O(1)** access to any nurse's assignment
-- Easy constraint checking (consecutive patterns, weekends)
-- Standard in NRP literature
-- Memory efficient for instances up to ~100 nurses
-### Why Binary Shift Encoding?
-```python
-OFF = 1 # 0b00001
-Night = 2 # 0b00010
-Day = 4 # 0b00100
-Late = 8 # 0b01000
-Early = 16 # 0b10000
-```
-- Fast bitwise operations
-- Easy validation (only one bit set = valid shift)
-- Extensible to more shift types
-### Why Greedy Baseline Constructor?
-- **Fast:** Generates solution in <0.1 seconds
-- **Feasible:** Guarantees hard constraints satisfied
-- **Realistic:** Mimics manual scheduling approach
-- **Improvable:** Intentionally leaves optimisation opportunities
-### Why Remove "Swap Shifts (Same Nurse)"?
-- **0% acceptance rate** across 640 attempts
-- Wastes computation (15% of operator attempts)
-- NRP is inter-nurse problem, not intra-nurse
-- Removal improved efficiency with no quality loss
----
-## Literature Foundation
-**Primary References:**
 
-1. **Burke, E. K., & Bykov, Y. (2016).** "A Step Counting Hill Climbing Algorithm applied to University Examination Timetabling." *Journal of Scheduling, 19*(4), 479-492.
-    - Source of SCHC algorithm
-    - Counter mechanism and acceptance bounds
+**Quick checks (seconds):**
 
-2. **Haspeslagh, S., et al. (2014).** "The first international nurse rostering competition 2010." *Annals of Operations Research, 218*(1), 221-236.
-    - INRC-I competition description
-    - Benchmark instance definitions
-
-3. **Hybridisation papers** (Harmony Search, Genetic Algorithms, etc.)
-    - Source of neighbourhood operator designs
-    - NRP-specific heuristics
----
-## Limitations & Future Work
-### Current Limitations
-2. **Testing scope:** Only sprint01 instance tested thoroughly
-4. **Training data:** No test set validation yet
-6. **Scalability:** Not yet tested on medium/long instances (30-50 nurses)
-8. **Baseline only:** HC implemented as comparison baseline for SCHC
-### Planned Extensions
-**Immediate:**
-- Implement SCHC with counter mechanism (Lc > 0)
-- Test SCHC-all, SCHC-acp, SCHC-imp variants
-- Compare HC vs SCHC on sprint01
-- Analyse impact of Lc parameter
-**Short-term:**
-- Scale to medium instances (~30 nurses)
-- Scale to long instances (~50 nurses, 56 days)
-- Test on multiple data instances for robustness
-- Statistical significance testing
-**Potential (If time permits):**
-- Hybrid approaches (SCHC + Simulated Annealing)
-- Adaptive operator selection
-- Incremental constraint evaluation
----
-## Dependencies
-**Core (Required):**
-- Python 3.12+
-- Standard library only (json, random, time, pathlib)
-**Optional:**
-- `matplotlib>=3.7.0` - Convergence plot visualisation
-**Install optional dependencies:**
 ```bash
-pip install matplotlib
+python -m pytest tests/                 # includes exact reproduction of two Falcon runs
+python experiments/validate_penalty.py  # penalty function vs published best-known solutions
+python experiments/analyse_results.py   # regenerates results/analysis/ from results/raw/
+python experiments/plot_results.py      # regenerates results/figures/
 ```
----
-## Repository Statistics
-**Code Metrics:**
-- Total lines: ~1,100
-- Python files: 12
-- Test coverage: Comprehensive (all constraints, all operators)
-- Documentation: Inline comments + this README
-**Git Activity:**
-- Commits: 9
-- Branches: main
-- Last updated: 11/03/2026
----
-## Contact & Supervision
-**Student:** Arthur Armstrong
 
-**Supervisor:** Mosab Bazargani
+`analyse_results.py` reproduces every table in `results/analysis/` exactly from the raw CSVs.
 
-**Institution:** Bangor University School of Computer Science
+**Rerunning the experiments.** Every run is seeded with its run number, and the code in
+`src/` is the code that ran on Falcon, so rerunning an instance regenerates its row of
+`results/raw/` exactly (apart from the wall-clock times). One instance at a time:
 
-**Project Duration:** October 2025 - May 2026
-
----
-## License
-This is academic coursework. Code may not be reused without permission from the author and institution.
----
-## Acknowledgments
-- INRC-I competition organisers for benchmark instances
-- Burke & Bykov for SCHC algorithm foundation
-- Mosab Bazargani for guidance and feedback
-- NRP research community for operator design inspiration
----
-**Last Updated:** 11/03/2026
-
-**Project Status:** Active Development
----
-## Quick Start Guide
-
-**For someone new to the project:**
-
-1. **Clone and explore:**
 ```bash
-git clone [your-repo-url]
-cd Codels src/ # See project structure
+python experiments/run_instance_sweep.py sprint 1    # roughly 2.5 hours on one core
 ```
-2. **Understand the baseline:**
+
+The full experiment is three Slurm job arrays, one task per instance:
+
 ```bash
-python src/tests/data_analyser.py
+sbatch experiments/slurm/submit_sprint_array.sh   # 10 tasks, about 2.5 h each
+sbatch experiments/slurm/submit_medium_array.sh   # 5 tasks, about 20 h each
+sbatch experiments/slurm/submit_long_array.sh     # 5 tasks, about 50 to 58 h each
 ```
-Outputs: Baseline schedule and constraint breakdown
-3. **Test operators:**
-```bash
-python src/tests/test_operators.py
-```
-Outputs: Which operators work and why
-4. **Run optimisation:**
-```bash
-python src/tests/test_hc.py
-```
-Outputs: Full HC optimisation with before/after comparison
-5. **Review results:**
-- Check terminal output for penalty improvements
-- View `hc_convergence.png` for convergence visualisation
-- Compare baseline vs optimised schedules
+
+Set `--account` in each script to your own project before submitting. On a single machine
+the whole sweep would take around 390 CPU-hours, so a cluster, or a lot of patience, is
+recommended.
+
 ---
-**Questions? Issues? Suggestions?**
-Contact: rtr22yht@bangor.ac.uk
+
+## Validity notes and limitations
+
+* **Penalty function.** Evaluating the published best-known solutions of Toffolo et al. with
+  this project's evaluator gives discrepancies of 0 to 7 points, always in the direction of
+  under-penalisation (`experiments/validate_penalty.py`). Absolute penalties are therefore
+  marginally optimistic; comparisons between algorithms are unaffected because they share the
+  same evaluator.
+* **Lc range.** For SCHC-all and SCHC-acp, the best Lc found at every scale is the largest
+  value tested (1500 at Sprint, 2500 at Medium and Long), and the curves above are still
+  falling there. Larger Lc may
+  give further gains at proportionally higher cost; the reported optimum is the best value
+  within the tested range.
+* **Statistics.** Comparisons pair runs by instance and seed. The effect size r is derived
+  from the normal approximation of the Wilcoxon p-value, as r = |Z| / √N.
+* **Comparison with published methods** (Section 4.4 of the dissertation) is indicative only,
+  as the reference results used different hardware and time budgets.
+
+---
+
+## Project history
+
+Only the work described above reflects the final results. The project went through several
+earlier stages, including results produced by implementations of the SCHC variants that were
+later found to be incorrect. That material is kept in [`archive/`](archive/), together with a
+timeline of how the work developed.
+
+> **The conference-style poster in `archive/poster/` (March 2026) reports findings that were
+> later disproven.** It was produced from the earlier, flawed implementation and does not
+> reflect the final results. Please refer to this README and the dissertation instead.
+
+The first 16 commits in this repository's history are the original development commits from
+February 2026. The final experiments were run on the Falcon HPC cluster from April 2026 and
+were added to version control after the project was completed.
+
+---
+
+## Citation
+
+```
+Armstrong, A. (2026). Step Counting Hill Climbing: Application to the Nurse Rostering
+Problem. BSc dissertation, School of Computer Science and Electronic Engineering,
+Bangor University.
+```
+
+## Acknowledgements
+
+Supervised by Dr Mosab Bazargani. The Medium and Long experiments were made possible by
+Supercomputing Wales and the Cardiff University Falcon HPC cluster, funded by the European
+Regional Development Fund and the Welsh Government.
+
+INRC-I instances: Haspeslagh, De Causmaecker, Schaerf and Stølevik (2014), *The first
+international nurse rostering competition 2010*, Annals of Operations Research 218(1).
+Best-known solutions: Toffolo et al., <https://benchmark.gent.cs.kuleuven.be/nrp>.
+
+## Licence
+
+The source code is released under the MIT Licence (see [`LICENSE`](LICENSE)). The
+dissertation and poster are © Arthur Armstrong and are included for reading and reference;
+please cite them if you use their content.

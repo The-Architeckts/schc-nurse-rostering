@@ -189,8 +189,8 @@ def check_single_assignment_violations(solution):
 
         # Encoding enforces each day have exactly one value, we validate by ensuring no day has an invalid value
         for day_index, shift in enumerate(schedule):
-            # Valid shift values: 1 (OFF), 2 (N), 4 (D), 8 (L), 16 (E)
-            valid_values = {1, 2, 4, 8, 16}
+            # Valid shift values: 1 (OFF), 2 (N), 4 (D), 8 (L), 16 (E), 32 (DH)
+            valid_values = {1, 2, 4, 8, 16, 32}
             
             if shift not in valid_values:
                 violations += 1

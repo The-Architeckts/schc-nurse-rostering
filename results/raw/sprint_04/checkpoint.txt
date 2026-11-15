@@ -1,0 +1,17 @@
+[2026-04-24 19:14:32] Started INRC1_sprint04
+[2026-04-24 19:15:16] HC complete  avg=72.2
+[2026-04-24 19:15:47] SCHC-all Lc=100 complete
+[2026-04-24 19:17:04] SCHC-all Lc=250 complete
+[2026-04-24 19:19:49] SCHC-all Lc=500 complete
+[2026-04-24 19:26:18] SCHC-all Lc=1000 complete
+[2026-04-24 19:36:12] SCHC-all Lc=1500 complete
+[2026-04-24 19:37:09] SCHC-acp Lc=100 complete
+[2026-04-24 19:40:35] SCHC-acp Lc=250 complete
+[2026-04-24 19:48:22] SCHC-acp Lc=500 complete
+[2026-04-24 20:04:43] SCHC-acp Lc=1000 complete
+[2026-04-24 20:28:31] SCHC-acp Lc=1500 complete
+[2026-04-24 20:37:05] SCHC-imp Lc=25 complete
+[2026-04-24 20:48:00] SCHC-imp Lc=50 complete
+[2026-04-24 21:04:46] SCHC-imp Lc=80 complete
+[2026-04-24 21:25:23] SCHC-imp Lc=100 complete
+[2026-04-24 21:25:23] Complete 2.18h
