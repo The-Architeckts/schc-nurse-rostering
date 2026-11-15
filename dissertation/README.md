@@ -3,7 +3,7 @@
 | File | What it is |
 |---|---|
 | [`SCHC_NRP_Dissertation_revised.pdf`](SCHC_NRP_Dissertation_revised.pdf) | **Revised edition (November 2026). Read this one.** The text is corrected to agree with the final results and code; every change is listed in its Appendix A. |
-| [`SCHC_NRP_Dissertation.pdf`](SCHC_NRP_Dissertation.pdf) | The version submitted and assessed in May 2026, unchanged. |
+| [`SCHC_NRP_Dissertation.pdf`](SCHC_NRP_Dissertation.pdf) | The version submitted and assessed in May 2026. Its content is unchanged; only the two signature images on the declarations page have been blanked for public release. |
 | [`ERRATA.md`](ERRATA.md) | The corrections, with how to verify each one against the repository. |
 | [`source/`](source/) | LaTeX source of the revised edition. |
 

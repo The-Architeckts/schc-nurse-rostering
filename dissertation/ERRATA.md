@@ -1,8 +1,9 @@
 # Errata and post-submission notes
 
-`SCHC_NRP_Dissertation.pdf` is the dissertation exactly as submitted and assessed in May 2026,
-and it is left unchanged. After submission, its results tables and principal quantitative
-statements were checked against the final raw results and code in this repository
+`SCHC_NRP_Dissertation.pdf` is the dissertation as submitted and assessed in May 2026. Its
+content is unchanged; only the two signature images on the declarations page have been blanked
+for public release. After submission, its results tables and principal quantitative statements
+were checked against the final raw results and code in this repository
 (`results/raw/`, `results/analysis/`). Where the two disagree, **the results and code in this
 repository are authoritative**. The corrections are listed below, and all of them are applied
 in the revised edition, [`SCHC_NRP_Dissertation_revised.pdf`](SCHC_NRP_Dissertation_revised.pdf)
