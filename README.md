@@ -12,6 +12,7 @@ benchmark (INRC-I). It provides the first systematic evaluation of all three SCH
 on this benchmark.
 
 **Full dissertation:** [`dissertation/SCHC_NRP_Dissertation.pdf`](dissertation/SCHC_NRP_Dissertation.pdf)
+**Errata and post-submission corrections:** [`dissertation/ERRATA.md`](dissertation/ERRATA.md)
 **Interactive results dashboard:** <https://the-architeckts.github.io/schc-nurse-rostering/>
 
 ---
@@ -36,6 +37,26 @@ approximately 390 CPU-hours on the Supercomputing Wales Falcon cluster.
    effective bound-update frequency decouples from the nominal Lc. As improving moves become
    rarer at Long scale, SCHC-imp falls back to statistical equivalence with SCHC-all
    (p = 0.92).
+
+### Further findings from the post-submission SQL analysis
+
+These come from the SQL queries added after submission (see
+[Results database and SQL](#results-database-and-sql)) and are not in the dissertation.
+
+5. **The advantage over HC holds run by run, not only on average.** Pairing each SCHC run at its
+   optimal Lc with the HC run on the same instance and seed, every variant wins at least 96 of
+   100 Sprint pairs and all 50 Medium and all 50 Long pairs (query 2).
+6. **Returns on larger Lc diminish steeply.** For SCHC-acp at Long scale, raising Lc from 1500
+   to 2500 improves mean penalty by 1.8 points at a cost of about 31 extra minutes per run,
+   roughly 1,070 seconds per penalty point (query 3). SCHC-all and SCHC-acp were still improving
+   at the largest Lc tested, so the optimum may lie beyond the tested range, but each further
+   gain is expensive.
+7. **For SCHC-imp, the optimum lies at the edge of the tested range.** Its best Lc at Medium and
+   Long scale (15) is the smallest value tested, and penalty rises steadily with Lc above it, so
+   its true optimum may be lower still.
+
+Findings 6 and 7 suggest that the Lc sweeps should be extended in both directions, which
+is a natural next experiment for this algorithm and problem.
 
 ![Mean penalty reduction relative to HC](results/figures/improvement_over_hc.png)
 
@@ -224,21 +245,23 @@ python -m pytest
 
 ## Validity notes and limitations
 
-* **Penalty function.** Evaluating the published best-known solutions of Toffolo et al. with
-  this project's evaluator gives discrepancies of 0 to 7 points, always in the direction of
-  under-penalisation (`experiments/validate_penalty.py`). Absolute penalties are therefore
-  marginally optimistic; comparisons between algorithms are unaffected because they share the
-  same evaluator.
+* **Penalty function and absolute values.** On the published best-known solutions of Toffolo et
+  al., this project's evaluator agrees to within 0 to 7 points, always under-penalising
+  (`experiments/validate_penalty.py`). However, the best solutions found in this study score
+  below the published best-known values on all ten Sprint and Long instances where these are
+  compared, which strongly suggests the evaluator misses some violations that the searches
+  learned to exploit. **Comparisons between the algorithms here are unaffected**, since all use
+  the same evaluator, but absolute penalties and comparisons with other published methods
+  should not be relied on. See item 5 of [`dissertation/ERRATA.md`](dissertation/ERRATA.md).
 * **Lc range.** For SCHC-all and SCHC-acp, the best Lc found at every scale is the largest
   value tested (1500 at Sprint, 2500 at Medium and Long), and the curves above are still
-  falling there. Larger Lc may
-  give further gains at proportionally higher cost; the reported optimum is the best value
-  within the tested range. Conversely, the best SCHC-imp value at Medium and Long scale is the
+  falling there. Larger Lc may give further gains at proportionally higher cost; the reported
+  optimum is the best value within the tested range. Conversely, the best SCHC-imp value at Medium and Long scale is the
   smallest tested (15), so its true optimum there may lie lower still.
 * **Statistics.** Comparisons pair runs by instance and seed. The effect size r is derived
   from the normal approximation of the Wilcoxon p-value, as r = |Z| / √N.
-* **Comparison with published methods** (Section 4.4 of the dissertation) is indicative only,
-  as the reference results used different hardware and time budgets.
+* **Errata.** A few figures in the submitted dissertation differ from the final results; the
+  results in this repository take precedence. See [`dissertation/ERRATA.md`](dissertation/ERRATA.md).
 
 ---
 
